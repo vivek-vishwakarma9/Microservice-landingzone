@@ -1,0 +1,49 @@
+# Local provider binaries and module cache
+.terraform/
+.terraform.rc
+
+# Local state files
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+*.tfstate.lock.info
+
+# Generated execution plans
+*.tfplan
+*.tfplan.bin
+*.plan
+spoke.apply.tfplan
+tfplan-meta.env
+
+# CLI crash logs
+crash.log
+crash.*.log
+
+# Explicitly KEEP dependency lock files!
+!.terraform.lock.hcl
+
+# Sensitive variable files & keys
+*.auto.tfvars
+*.secrets.tfvars
+secrets.tfvars
+local.tfvars
+*.pem
+*.key
+*.id_rsa
+id_rsa
+
+# Tools binaries directory
+tools/
+
+# Tool Reports
+.tflint.d/
+tflint-*.xml
+tfsec-*.xml
+checkov-*.xml
+infracost-*.json
+
+# OS & Editor Junk
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/
