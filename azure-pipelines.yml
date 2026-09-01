@@ -1,0 +1,379 @@
+# ==============================================================================
+# AIONOS ENTERPRISE INFRASTRUCTURE PIPELINE (DEV ENVIRONMENT)
+# Azure DevOps CI/CD Automation Pipeline
+# ==============================================================================
+
+trigger:
+  branches:
+    include:
+      - main
+      - master
+      - feature/*
+      - feature/**
+  paths:
+    include:
+      - 'environments/dev/**'
+      - 'modules/**'
+      - 'azure-pipelines.yml'
+
+pr:
+  branches:
+    include:
+      - main
+      - master
+  paths:
+    include:
+      - 'environments/dev/**'
+      - 'modules/**'
+
+schedules:
+  - cron: "0 0 * * *"
+    displayName: 'Daily Automated Drift Detection'
+    branches:
+      include:
+        - main
+    always: true
+
+lockBehavior: sequential
+
+variables:
+  - group: eng-dev-vars
+  - name: WORKING_DIR
+    value: '$(Build.SourcesDirectory)/environments/dev'
+
+stages:
+  # ============================================================================
+  # STAGE 1: VALIDATE AND SECURITY SCAN
+  # Static Analysis, Code Quality, Security & Compliance Checks
+  # ============================================================================
+  - stage: ValidateAndScan
+    displayName: 'Validate and Scan - Dev Environment'
+    jobs:
+      - job: QualityAndSecurity
+        displayName: 'Code Quality and Security Scans'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - checkout: self
+
+          - task: Cache@2
+            displayName: 'Cache Terraform CLI Binary'
+            inputs:
+              key: 'terraform | "$(Agent.OS)" | "$(TF_VERSION)"'
+              path: '$(Agent.TempDirectory)/tfbin'
+              cacheHitVar: 'TERRAFORM_CACHE_RESTORED'
+
+          - task: Bash@3
+            displayName: 'Install Terraform CLI'
+            condition: ne(variables.TERRAFORM_CACHE_RESTORED, 'true')
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                INSTALL_DIR="$(Agent.TempDirectory)/tfbin"
+                mkdir -p "$INSTALL_DIR"
+                ZIP="$(Agent.TempDirectory)/tf.zip"
+                curl -fsSL "https://releases.hashicorp.com/terraform/$(TF_VERSION)/terraform_$(TF_VERSION)_linux_amd64.zip" -o "$ZIP"
+                unzip -qo "$ZIP" -d "$INSTALL_DIR"
+                chmod +x "$INSTALL_DIR/terraform"
+
+          - task: Bash@3
+            displayName: 'Add Terraform CLI to PATH'
+            inputs:
+              targetType: inline
+              script: |
+                echo "##vso[task.prependpath]$(Agent.TempDirectory)/tfbin"
+
+          - task: CmdLine@2
+            displayName: 'Terraform Format Check'
+            inputs:
+              script: |
+                terraform fmt -check -recursive $(WORKING_DIR) || true
+
+          - task: CmdLine@2
+            displayName: 'Terraform Init and Validate'
+            condition: succeededOrFailed()
+            inputs:
+              script: |
+                set -euo pipefail
+                mkdir -p "$(WORKING_DIR)"
+                cd "$(WORKING_DIR)"
+                terraform init -backend=false
+                terraform validate
+
+          - task: Bash@3
+            displayName: 'Execute TFLint Code Analysis'
+            condition: succeededOrFailed()
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                curl -fsSL https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+                mkdir -p "$(WORKING_DIR)"
+                cd "$(WORKING_DIR)"
+                tflint --init || true
+                set +e
+                tflint
+                TFLINT_RC=$?
+                tflint --format junit > "$(System.DefaultWorkingDirectory)/tflint-dev.xml" || true
+                set -e
+                if [ "$TFLINT_RC" -ne 0 ]; then
+                  echo "##vso[task.logissue type=warning]tflint reported code quality issues"
+                fi
+
+          - task: PublishTestResults@2
+            displayName: 'Publish TFLint Results'
+            condition: always()
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: tflint-dev.xml
+              testRunTitle: 'TFLint — Dev Environment'
+              mergeTestResults: true
+
+          - task: Bash@3
+            displayName: 'Execute TFSec Security Scan'
+            condition: succeededOrFailed()
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                curl -fsSL https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
+                tfsec "$(WORKING_DIR)" --format junit --out "$(System.DefaultWorkingDirectory)/tfsec-dev.xml" || true
+
+          - task: PublishTestResults@2
+            displayName: 'Publish TFSec Security Results'
+            condition: always()
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: tfsec-dev.xml
+              testRunTitle: 'TFSec Security Scan — Dev'
+              mergeTestResults: true
+
+          - task: Bash@3
+            displayName: 'Execute Checkov Policy Scan'
+            condition: succeededOrFailed()
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                pip3 install --quiet checkov
+                checkov -d "$(WORKING_DIR)" --framework terraform --soft-fail --output junitxml --output-file-path "$(System.DefaultWorkingDirectory)/checkov-dev.xml" || true
+
+          - task: PublishTestResults@2
+            displayName: 'Publish Checkov Compliance Results'
+            condition: always()
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: checkov-dev.xml
+              testRunTitle: 'Checkov SAST — Dev Environment'
+              mergeTestResults: true
+
+  # ============================================================================
+  # STAGE 2: PLAN AND COST ANALYSIS
+  # Remote Plan Generation & Infracost Monthly Estimation
+  # ============================================================================
+  - stage: PlanAndCost
+    displayName: 'Plan and Cost Analysis - Dev Environment'
+    dependsOn: ValidateAndScan
+    jobs:
+      - job: PlanAndCostEstimate
+        displayName: 'Generate Execution Plan and Cost Analysis'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - checkout: self
+
+          - task: Cache@2
+            displayName: 'Cache Terraform CLI Binary'
+            inputs:
+              key: 'terraform | "$(Agent.OS)" | "$(TF_VERSION)"'
+              path: '$(Agent.TempDirectory)/tfbin'
+              cacheHitVar: 'TERRAFORM_CACHE_RESTORED'
+
+          - task: Bash@3
+            displayName: 'Install Terraform CLI'
+            condition: ne(variables.TERRAFORM_CACHE_RESTORED, 'true')
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                INSTALL_DIR="$(Agent.TempDirectory)/tfbin"
+                mkdir -p "$INSTALL_DIR"
+                ZIP="$(Agent.TempDirectory)/tf.zip"
+                curl -fsSL "https://releases.hashicorp.com/terraform/$(TF_VERSION)/terraform_$(TF_VERSION)_linux_amd64.zip" -o "$ZIP"
+                unzip -qo "$ZIP" -d "$INSTALL_DIR"
+                chmod +x "$INSTALL_DIR/terraform"
+
+          - task: Bash@3
+            displayName: 'Add Terraform CLI to PATH'
+            inputs:
+              targetType: inline
+              script: |
+                echo "##vso[task.prependpath]$(Agent.TempDirectory)/tfbin"
+
+          - task: AzureCLI@2
+            displayName: 'Terraform Remote Init and Plan'
+            inputs:
+              azureSubscription: '$(SERVICE_CONNECTION)'
+              scriptType: 'bash'
+              addSpnToEnvironment: true
+              workingDirectory: $(WORKING_DIR)
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                set -euo pipefail
+                mkdir -p "$(WORKING_DIR)"
+                cd "$(WORKING_DIR)"
+                if [ ! -f "main.tf" ] && [ ! -f "providers.tf" ]; then
+                  echo "##vso[task.logissue type=error]No Terraform configuration files found in $(WORKING_DIR). Please ensure you run this pipeline on a branch containing Terraform code (e.g. feature/infra-deployment)."
+                  exit 1
+                fi
+                export ARM_CLIENT_ID="${servicePrincipalId}"
+                export ARM_TENANT_ID="${tenantId}"
+                export ARM_OIDC_TOKEN="${idToken}"
+                export ARM_USE_OIDC="true"
+                export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+
+                terraform init \
+                  -backend-config="resource_group_name=$(BACKEND_RG)" \
+                  -backend-config="storage_account_name=$(BACKEND_STORAGE_ACCOUNT)" \
+                  -backend-config="container_name=$(BACKEND_CONTAINER)" \
+                  -backend-config="key=$(BACKEND_KEY)" \
+                  -backend-config="use_oidc=true" \
+                  -backend-config="use_azuread_auth=true"
+
+                terraform plan -no-color -out=eng-dev.tfplan
+
+                set +e
+                terraform plan -detailed-exitcode -no-color > /tmp/drift_output.txt 2>&1
+                EXIT_CODE=$?
+                set -e
+                if [ $EXIT_CODE -eq 2 ]; then
+                  echo "##vso[task.logissue type=warning]DRIFT DETECTED: Infrastructure in Azure differs from Terraform code configuration!"
+                elif [ $EXIT_CODE -eq 0 ]; then
+                  echo "NO DRIFT DETECTED: Infrastructure in Azure is 100% in sync with Terraform code."
+                fi
+
+          - task: Bash@3
+            displayName: 'Execute Infracost Estimation & PR Comment'
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                curl -fsSL https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.sh | sh
+                if [ -n "$(INFRACOST_API_KEY)" ]; then
+                  infracost breakdown --path "$(WORKING_DIR)" --format json --out-file "$(System.DefaultWorkingDirectory)/infracost-dev.json"
+                  infracost breakdown --path "$(WORKING_DIR)" --format table
+                  
+                  if [ -n "$SYSTEM_PULLREQUEST_PULLREQUESTID" ]; then
+                    infracost comment azure-repos --path "$(System.DefaultWorkingDirectory)/infracost-dev.json" \
+                      --azure-access-token "$(System.AccessToken)" \
+                      --pull-request "$SYSTEM_PULLREQUEST_PULLREQUESTID" \
+                      --repo-url "$(Build.Repository.Uri)" \
+                      --behavior update || true
+                  fi
+                else
+                  echo "##vso[task.logissue type=warning]INFRACOST_API_KEY is not configured in Variable Group eng-dev-vars. Skipping cost estimation."
+                fi
+
+          - task: Bash@3
+            displayName: 'Clean Cache Directory'
+            inputs:
+              targetType: inline
+              script: |
+                rm -rf "$(WORKING_DIR)/.terraform"
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Execution Plan Artifact'
+            inputs:
+              targetPath: '$(WORKING_DIR)'
+              artifact: eng-dev-plan
+
+  # ============================================================================
+  # STAGE 3: APPLY DEPLOYMENT
+  # Infrastructure Deployment (Main/Master Branch Only)
+  # ============================================================================
+  - stage: Apply
+    displayName: 'Apply Deployment - Dev Environment'
+    dependsOn: PlanAndCost
+    condition: and(succeeded(), in(variables['Build.SourceBranch'], 'refs/heads/main', 'refs/heads/master'))
+    jobs:
+      - deployment: ApplyDev
+        displayName: 'Deploy Infrastructure to Azure'
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: 'eng-us-dev'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+
+                - task: Cache@2
+                  displayName: 'Cache Terraform CLI Binary'
+                  inputs:
+                    key: 'terraform | "$(Agent.OS)" | "$(TF_VERSION)"'
+                    path: '$(Agent.TempDirectory)/tfbin'
+                    cacheHitVar: 'TERRAFORM_CACHE_RESTORED'
+
+                - task: Bash@3
+                  displayName: 'Install Terraform CLI'
+                  condition: ne(variables.TERRAFORM_CACHE_RESTORED, 'true')
+                  inputs:
+                    targetType: inline
+                    script: |
+                      set -euo pipefail
+                      INSTALL_DIR="$(Agent.TempDirectory)/tfbin"
+                      mkdir -p "$INSTALL_DIR"
+                      ZIP="$(Agent.TempDirectory)/tf.zip"
+                      curl -fsSL "https://releases.hashicorp.com/terraform/$(TF_VERSION)/terraform_$(TF_VERSION)_linux_amd64.zip" -o "$ZIP"
+                      unzip -qo "$ZIP" -d "$INSTALL_DIR"
+                      chmod +x "$INSTALL_DIR/terraform"
+
+                - task: Bash@3
+                  displayName: 'Add Terraform CLI to PATH'
+                  inputs:
+                    targetType: inline
+                    script: |
+                      echo "##vso[task.prependpath]$(Agent.TempDirectory)/tfbin"
+
+                - task: DownloadPipelineArtifact@2
+                  displayName: 'Download Execution Plan Artifact'
+                  inputs:
+                    artifact: eng-dev-plan
+                    path: $(WORKING_DIR)
+
+                - task: AzureCLI@2
+                  displayName: 'Terraform Remote Init and Apply'
+                  inputs:
+                    azureSubscription: '$(SERVICE_CONNECTION)'
+                    scriptType: 'bash'
+                    addSpnToEnvironment: true
+                    workingDirectory: $(WORKING_DIR)
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      set -euo pipefail
+                      mkdir -p "$(WORKING_DIR)"
+                      cd "$(WORKING_DIR)"
+                      export ARM_CLIENT_ID="${servicePrincipalId}"
+                      export ARM_TENANT_ID="${tenantId}"
+                      export ARM_OIDC_TOKEN="${idToken}"
+                      export ARM_USE_OIDC="true"
+                      export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+
+                      terraform init \
+                        -backend-config="resource_group_name=$(BACKEND_RG)" \
+                        -backend-config="storage_account_name=$(BACKEND_STORAGE_ACCOUNT)" \
+                        -backend-config="container_name=$(BACKEND_CONTAINER)" \
+                        -backend-config="key=$(BACKEND_KEY)" \
+                        -backend-config="use_oidc=true" \
+                        -backend-config="use_azuread_auth=true"
+
+                      set +e
+                      terraform apply -no-color -auto-approve eng-dev.tfplan
+                      APPLY_EXIT=$?
+                      set -e
+
+                      if [ $APPLY_EXIT -ne 0 ]; then
+                        echo "##vso[task.logissue type=warning]Apply failed or state lock issue detected. Retrying with auto-recovery..."
+                        terraform apply -no-color -auto-approve eng-dev.tfplan
+                      fi
