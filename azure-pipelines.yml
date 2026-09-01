@@ -43,21 +43,21 @@ variables:
 
 stages:
   # ============================================================================
-  # STAGE 1: VALIDATE AND SECURITY SCAN
-  # Static Analysis, Code Quality, Security & Compliance Checks
+  # STAGE 1: CODE QUALITY & SECURITY SCANS
+  # Formatting, Syntax, TFLint, TFSec & Checkov Scans
   # ============================================================================
   - stage: ValidateAndScan
-    displayName: 'Validate and Scan - Dev Environment'
+    displayName: 'Validate & Security Scans'
     jobs:
       - job: QualityAndSecurity
-        displayName: 'Code Quality and Security Scans'
+        displayName: 'Quality & Security Scans'
         pool:
           vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
 
           - task: Cache@2
-            displayName: 'Cache Terraform CLI Binary'
+            displayName: 'Cache Terraform CLI'
             inputs:
               key: 'terraform | "$(Agent.OS)" | "$(TF_VERSION)"'
               path: '$(Agent.TempDirectory)/tfbin'
@@ -78,20 +78,20 @@ stages:
                 chmod +x "$INSTALL_DIR/terraform"
 
           - task: Bash@3
-            displayName: 'Add Terraform CLI to PATH'
+            displayName: 'Add Terraform to PATH'
             inputs:
               targetType: inline
               script: |
                 echo "##vso[task.prependpath]$(Agent.TempDirectory)/tfbin"
 
           - task: CmdLine@2
-            displayName: 'Terraform Format Check'
+            displayName: 'Terraform Format'
             inputs:
               script: |
                 terraform fmt -check -recursive $(WORKING_DIR) || true
 
           - task: CmdLine@2
-            displayName: 'Terraform Init and Validate'
+            displayName: 'Terraform Validate'
             condition: succeededOrFailed()
             inputs:
               script: |
@@ -102,7 +102,7 @@ stages:
                 terraform validate
 
           - task: Bash@3
-            displayName: 'Execute TFLint Code Analysis'
+            displayName: 'TFLint Analysis'
             condition: succeededOrFailed()
             inputs:
               targetType: inline
@@ -122,7 +122,7 @@ stages:
                 fi
 
           - task: PublishTestResults@2
-            displayName: 'Publish TFLint Results'
+            displayName: 'Publish TFLint'
             condition: always()
             inputs:
               testResultsFormat: 'JUnit'
@@ -131,7 +131,7 @@ stages:
               mergeTestResults: true
 
           - task: Bash@3
-            displayName: 'Execute TFSec Security Scan'
+            displayName: 'TFSec Scan'
             condition: succeededOrFailed()
             inputs:
               targetType: inline
@@ -141,7 +141,7 @@ stages:
                 tfsec "$(WORKING_DIR)" --format junit --out "$(System.DefaultWorkingDirectory)/tfsec-dev.xml" || true
 
           - task: PublishTestResults@2
-            displayName: 'Publish TFSec Security Results'
+            displayName: 'Publish TFSec'
             condition: always()
             inputs:
               testResultsFormat: 'JUnit'
@@ -150,7 +150,7 @@ stages:
               mergeTestResults: true
 
           - task: Bash@3
-            displayName: 'Execute Checkov Policy Scan'
+            displayName: 'Checkov Scan'
             condition: succeededOrFailed()
             inputs:
               targetType: inline
@@ -160,7 +160,7 @@ stages:
                 checkov -d "$(WORKING_DIR)" --framework terraform --soft-fail --output junitxml --output-file-path "$(System.DefaultWorkingDirectory)/checkov-dev.xml" || true
 
           - task: PublishTestResults@2
-            displayName: 'Publish Checkov Compliance Results'
+            displayName: 'Publish Checkov'
             condition: always()
             inputs:
               testResultsFormat: 'JUnit'
@@ -173,18 +173,18 @@ stages:
   # Remote Plan Generation & Infracost Monthly Estimation
   # ============================================================================
   - stage: PlanAndCost
-    displayName: 'Plan and Cost Analysis - Dev Environment'
+    displayName: 'Plan & Costing'
     dependsOn: ValidateAndScan
     jobs:
       - job: PlanAndCostEstimate
-        displayName: 'Generate Execution Plan and Cost Analysis'
+        displayName: 'Plan Generation & Infracost'
         pool:
           vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
 
           - task: Cache@2
-            displayName: 'Cache Terraform CLI Binary'
+            displayName: 'Cache Terraform CLI'
             inputs:
               key: 'terraform | "$(Agent.OS)" | "$(TF_VERSION)"'
               path: '$(Agent.TempDirectory)/tfbin'
@@ -205,14 +205,14 @@ stages:
                 chmod +x "$INSTALL_DIR/terraform"
 
           - task: Bash@3
-            displayName: 'Add Terraform CLI to PATH'
+            displayName: 'Add Terraform to PATH'
             inputs:
               targetType: inline
               script: |
                 echo "##vso[task.prependpath]$(Agent.TempDirectory)/tfbin"
 
           - task: AzureCLI@2
-            displayName: 'Terraform Remote Init and Plan'
+            displayName: 'Terraform Plan'
             inputs:
               azureSubscription: '$(SERVICE_CONNECTION)'
               scriptType: 'bash'
@@ -224,7 +224,7 @@ stages:
                 mkdir -p "$(WORKING_DIR)"
                 cd "$(WORKING_DIR)"
                 if [ ! -f "main.tf" ] && [ ! -f "providers.tf" ]; then
-                  echo "##vso[task.logissue type=error]No Terraform configuration files found in $(WORKING_DIR). Please ensure you run this pipeline on a branch containing Terraform code (e.g. feature/infra-deployment)."
+                  echo "##vso[task.logissue type=error]No Terraform configuration files found in $(WORKING_DIR). Please ensure you run this pipeline on a branch containing Terraform code (e.g. feature/infra-setup)."
                   exit 1
                 fi
                 export ARM_CLIENT_ID="${servicePrincipalId}"
@@ -254,7 +254,7 @@ stages:
                 fi
 
           - task: Bash@3
-            displayName: 'Execute Infracost Estimation & PR Comment'
+            displayName: 'Infracost Analysis'
             inputs:
               targetType: inline
               script: |
@@ -276,29 +276,29 @@ stages:
                 fi
 
           - task: Bash@3
-            displayName: 'Clean Cache Directory'
+            displayName: 'Clean Cache'
             inputs:
               targetType: inline
               script: |
                 rm -rf "$(WORKING_DIR)/.terraform"
 
           - task: PublishPipelineArtifact@1
-            displayName: 'Publish Execution Plan Artifact'
+            displayName: 'Publish Plan Artifact'
             inputs:
               targetPath: '$(WORKING_DIR)'
               artifact: eng-dev-plan
 
   # ============================================================================
-  # STAGE 3: APPLY DEPLOYMENT
+  # STAGE 3: APPLY INFRASTRUCTURE DEPLOYMENT
   # Infrastructure Deployment (Main/Master Branch Only)
   # ============================================================================
   - stage: Apply
-    displayName: 'Apply Deployment - Dev Environment'
+    displayName: 'Apply Deployment'
     dependsOn: PlanAndCost
     condition: and(succeeded(), in(variables['Build.SourceBranch'], 'refs/heads/main', 'refs/heads/master'))
     jobs:
       - deployment: ApplyDev
-        displayName: 'Deploy Infrastructure to Azure'
+        displayName: 'Deploy Resources to Azure'
         pool:
           vmImage: 'ubuntu-latest'
         environment: 'eng-us-dev'
@@ -309,7 +309,7 @@ stages:
                 - checkout: self
 
                 - task: Cache@2
-                  displayName: 'Cache Terraform CLI Binary'
+                  displayName: 'Cache Terraform CLI'
                   inputs:
                     key: 'terraform | "$(Agent.OS)" | "$(TF_VERSION)"'
                     path: '$(Agent.TempDirectory)/tfbin'
@@ -330,20 +330,20 @@ stages:
                       chmod +x "$INSTALL_DIR/terraform"
 
                 - task: Bash@3
-                  displayName: 'Add Terraform CLI to PATH'
+                  displayName: 'Add Terraform to PATH'
                   inputs:
                     targetType: inline
                     script: |
                       echo "##vso[task.prependpath]$(Agent.TempDirectory)/tfbin"
 
                 - task: DownloadPipelineArtifact@2
-                  displayName: 'Download Execution Plan Artifact'
+                  displayName: 'Download Plan Artifact'
                   inputs:
                     artifact: eng-dev-plan
                     path: $(WORKING_DIR)
 
                 - task: AzureCLI@2
-                  displayName: 'Terraform Remote Init and Apply'
+                  displayName: 'Terraform Apply'
                   inputs:
                     azureSubscription: '$(SERVICE_CONNECTION)'
                     scriptType: 'bash'
