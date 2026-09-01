@@ -300,7 +300,7 @@ stages:
   - stage: Apply
     displayName: 'Apply Deployment'
     dependsOn: PlanAndCost
-    condition: and(succeeded(), in(variables['Build.SourceBranch'], 'refs/heads/main', 'refs/heads/master'))
+    condition: and(succeeded(), in(variables['Build.SourceBranch'], 'refs/heads/main', 'refs/heads/master'), ne(variables['Build.Reason'], 'Schedule'))
     jobs:
       - deployment: ApplyDev
         displayName: 'Deploy Resources to Azure'
