@@ -293,10 +293,10 @@ stages:
               targetPath: '$(WORKING_DIR)'
               artifact: eng-dev-plan
 
-  # ============================================================================
+  # ===========================================================================
   # STAGE 3: APPLY INFRASTRUCTURE DEPLOYMENT
   # Infrastructure Deployment (Main/Master Branch Only)
-  # ============================================================================
+  # ===========================================================================
   - stage: Apply
     displayName: 'Apply Deployment'
     dependsOn: PlanAndCost
