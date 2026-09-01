@@ -264,10 +264,11 @@ stages:
                   infracost breakdown --path "$(WORKING_DIR)" --format json --out-file "$(System.DefaultWorkingDirectory)/infracost-dev.json"
                   infracost breakdown --path "$(WORKING_DIR)" --format table
                   
-                  if [ -n "$SYSTEM_PULLREQUEST_PULLREQUESTID" ]; then
+                  PR_ID="$(System.PullRequest.PullRequestId)"
+                  if [ -n "$PR_ID" ]; then
                     infracost comment azure-repos --path "$(System.DefaultWorkingDirectory)/infracost-dev.json" \
                       --azure-access-token "$(System.AccessToken)" \
-                      --pull-request "$SYSTEM_PULLREQUEST_PULLREQUESTID" \
+                      --pull-request "$PR_ID" \
                       --repo-url "$(Build.Repository.Uri)" \
                       --behavior update || true
                   fi
