@@ -157,7 +157,7 @@ stages:
               script: |
                 set -euo pipefail
                 pip3 install --quiet checkov
-                checkov -d "$(WORKING_DIR)" --framework terraform --soft-fail --output junitxml --output-file-path "$(System.DefaultWorkingDirectory)/checkov-dev.xml" || true
+                checkov -d "$(WORKING_DIR)" --framework terraform --soft-fail -o junitxml > "$(System.DefaultWorkingDirectory)/checkov-dev.xml" || true
 
           - task: PublishTestResults@2
             displayName: 'Publish Checkov'
