@@ -8,6 +8,7 @@ module "key_vaults" {
   key_vaults = {
     for k, v in var.key_vaults : k => merge(v, {
       tenant_id = data.azurerm_client_config.current.tenant_id
+      tags      = merge(local.mandatory_tags, coalesce(v.tags, {}))
     })
   }
 
@@ -20,6 +21,7 @@ module "postgresql" {
   postgresql_servers = {
     for k, v in var.postgresql_servers : k => merge(v, {
       administrator_password = v.administrator_password != null ? v.administrator_password : random_password.psql_password.result
+      tags                   = merge(local.mandatory_tags, coalesce(v.tags, {}))
     })
   }
 
@@ -27,8 +29,13 @@ module "postgresql" {
 }
 
 module "cosmosdb" {
-  source            = "../../modules/azurerm_cosmosdb_account"
-  cosmosdb_accounts = var.cosmosdb_accounts
+  source = "../../modules/azurerm_cosmosdb_account"
+
+  cosmosdb_accounts = {
+    for k, v in var.cosmosdb_accounts : k => merge(v, {
+      tags = merge(local.mandatory_tags, coalesce(v.tags, {}))
+    })
+  }
 
   depends_on = [module.resource_groups]
 }
@@ -39,6 +46,7 @@ module "apim" {
   apim_services = {
     for k, v in var.apim_services : k => merge(v, {
       identity_ids = v.identity_ids != null ? v.identity_ids : (v.identity_key != null ? [module.user_identities.identities[v.identity_key].id] : null)
+      tags         = merge(local.mandatory_tags, coalesce(v.tags, {}))
     })
   }
 
@@ -46,8 +54,13 @@ module "apim" {
 }
 
 module "storage_accounts" {
-  source           = "../../modules/azurerm_storage_account"
-  storage_accounts = var.storage_accounts
+  source = "../../modules/azurerm_storage_account"
+
+  storage_accounts = {
+    for k, v in var.storage_accounts : k => merge(v, {
+      tags = merge(local.mandatory_tags, coalesce(v.tags, {}))
+    })
+  }
 
   depends_on = [module.resource_groups]
 }
@@ -69,6 +82,7 @@ module "key_vault_secrets" {
       name         = v.name
       value        = v.secret_type == "raw" ? v.raw_value : local.secret_value_map[v.secret_type]
       key_vault_id = module.key_vaults.vaults[v.key_vault_key].id
+      tags         = merge(local.mandatory_tags, coalesce(v.tags, {}))
     }
   }
 
