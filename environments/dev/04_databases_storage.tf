@@ -82,7 +82,7 @@ module "key_vault_secrets" {
       name         = v.name
       value        = v.secret_type == "raw" ? v.raw_value : local.secret_value_map[v.secret_type]
       key_vault_id = module.key_vaults.vaults[v.key_vault_key].id
-      tags         = merge(local.mandatory_tags, coalesce(v.tags, {}))
+      tags         = local.mandatory_tags
     }
   }
 
