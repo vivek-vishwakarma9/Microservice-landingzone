@@ -23,6 +23,8 @@ locals {
     environment        = "dev"
     cost_center        = "engineering"
     owner              = "devops"
+    product            = "holosport"
+    team               = "engineering"
     dataClassification = "confidential"
     project            = "aionos-microservices"
     managed_by         = "terraform"

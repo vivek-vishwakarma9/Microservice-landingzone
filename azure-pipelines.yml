@@ -8,8 +8,6 @@ trigger:
     include:
       - main
       - master
-      - feature/*
-      - feature/**
   paths:
     include:
       - 'environments/dev/**'
