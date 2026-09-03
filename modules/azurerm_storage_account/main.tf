@@ -8,6 +8,6 @@ resource "azurerm_storage_account" "storage_account" {
   account_replication_type        = each.value.account_replication_type
   public_network_access_enabled   = coalesce(each.value.public_network_access_enabled, false)
   allow_nested_items_to_be_public = coalesce(each.value.allow_nested_items_to_be_public, false)
-  min_tls_version                 = "TLS1_2"
+  min_tls_version                 = try(each.value.min_tls_version, "TLS1_2")
   tags                            = each.value.tags
 }

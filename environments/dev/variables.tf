@@ -97,7 +97,7 @@ variable "azure_firewalls" {
       protocols = optional(list(object({
         type = string
         port = number
-      })), [
+        })), [
         { type = "Https", port = 443 },
         { type = "Http", port = 80 }
       ])
@@ -116,18 +116,18 @@ variable "nsgs" {
     subnet_key          = optional(string)
     subnet_id           = optional(string)
     security_rules = optional(map(object({
-      name                       = string
-      priority                   = number
-      direction                  = string
-      access                     = string
-      protocol                   = string
-      source_port_range          = optional(string, "*")
-      destination_port_range     = optional(string)
-      source_port_ranges         = optional(list(string))
-      destination_port_ranges    = optional(list(string))
-      source_address_prefix      = optional(string)
-      source_address_prefixes    = optional(list(string))
-      destination_address_prefix = optional(string)
+      name                         = string
+      priority                     = number
+      direction                    = string
+      access                       = string
+      protocol                     = string
+      source_port_range            = optional(string, "*")
+      destination_port_range       = optional(string)
+      source_port_ranges           = optional(list(string))
+      destination_port_ranges      = optional(list(string))
+      source_address_prefix        = optional(string)
+      source_address_prefixes      = optional(list(string))
+      destination_address_prefix   = optional(string)
       destination_address_prefixes = optional(list(string))
     })), {})
     tags = optional(map(string), {})
@@ -243,6 +243,10 @@ variable "virtual_machines" {
     key_vault_key         = optional(string, "kv-dev")
     subnet_key            = optional(string, "vnet1-vm_subnet")
     subnet_id             = optional(string)
+    computer_name         = optional(string)
+    disk_size_gb          = optional(number, 127)
+    storage_account_type  = optional(string, "Standard_LRS")
+    disk_caching          = optional(string, "ReadWrite")
     identity_key          = optional(string)
     install_kubectl       = optional(bool, false)
     install_az_cli        = optional(bool, false)

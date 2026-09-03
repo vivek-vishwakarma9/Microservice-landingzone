@@ -29,9 +29,9 @@ resource "azurerm_windows_virtual_machine" "windows_virtual_machine" {
   tags = each.value.tags
 
   os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-    disk_size_gb         = 32
+    caching              = coalesce(each.value.disk_caching, "ReadWrite")
+    storage_account_type = coalesce(each.value.storage_account_type, "Standard_LRS")
+    disk_size_gb         = coalesce(each.value.disk_size_gb, 127)
   }
 
   source_image_reference {

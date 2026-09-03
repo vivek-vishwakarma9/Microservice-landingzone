@@ -119,7 +119,7 @@ vpn_gateways = {
     location            = "East US"
     type                = "Vpn"
     vpn_type            = "RouteBased"
-    sku                 = "VpnGw1"
+    sku                 = "VpnGw1AZ"
     subnet_key          = "vnet1-gateway_subnet"
     tags = {
       environment = "dev"
@@ -154,7 +154,7 @@ azure_firewalls = {
         priority         = 200
         action           = "Allow"
         source_addresses = ["10.0.0.0/16"]
-        target_fqdns     = [
+        target_fqdns = [
           "*.github.com",
           "*.microsoft.com",
           "*.azure.com",
@@ -271,7 +271,7 @@ aks_clusters = {
     dns_prefix          = "aksdev"
     sku_tier            = "Standard"
     node_count          = 2
-    vm_size             = "Standard_D2s_v5"
+    vm_size             = "Standard_D2as_v5"
     tags = {
       environment = "dev"
     }
@@ -295,8 +295,8 @@ postgresql_servers = {
     name                = "psql-eng-dev-001"
     resource_group_name = "rg-eng-dev"
     location            = "East US"
-    version             = "15"
-    sku_name            = "B_Standard_B2s"
+    version             = "14"
+    sku_name            = "B_Standard_B1ms"
     storage_mb          = 32768
     administrator_login = "psqladmin"
     tags = {
@@ -338,6 +338,7 @@ virtual_machines = {
     resource_group_name = "rg-eng-dev"
     location            = "East US"
     size                = "Standard_D2s_v5"
+    disk_size_gb        = 127
     admin_username      = "azureuser"
     subnet_key          = "vnet1-vm_subnet"
     identity_key        = "uai-vm-dev"
@@ -353,6 +354,7 @@ virtual_machines = {
     resource_group_name = "rg-eng-dev"
     location            = "East US"
     size                = "Standard_D2s_v5"
+    disk_size_gb        = 127
     admin_username      = "azureuser"
     subnet_key          = "vnet1-vm_subnet"
     identity_key        = "uai-vm-dev"
@@ -368,6 +370,7 @@ virtual_machines = {
     resource_group_name = "rg-eng-dev"
     location            = "East US"
     size                = "Standard_D2s_v5"
+    disk_size_gb        = 127
     admin_username      = "azureuser"
     subnet_key          = "vnet1-vm_subnet"
     identity_key        = "uai-vm-dev"
@@ -405,29 +408,17 @@ storage_accounts = {
 
 function_apps = {
   "func-dev" = {
-    name                 = "func-eng-dev-001"
-    resource_group_name  = "rg-eng-dev"
-    location             = "East US"
-    storage_account_key  = "stfuncdev"
+    name                = "func-eng-dev-001"
+    resource_group_name = "rg-eng-dev"
+    location            = "East US"
+    storage_account_key = "stfuncdev"
     tags = {
       environment = "dev"
     }
   }
 }
 
-entra_external_ids = {
-  "entra-external-dev" = {
-    display_name            = "aionos-external-id-dev"
-    domain_name             = "aionosexternaldev.onmicrosoft.com"
-    resource_group_name     = "rg-eng-dev"
-    country_code            = "US"
-    data_residency_location = "United States"
-    sku_name                = "PremiumP1"
-    tags = {
-      environment = "dev"
-    }
-  }
-}
+entra_external_ids = {}
 
 private_endpoints = {
   "pe-keyvault" = {
