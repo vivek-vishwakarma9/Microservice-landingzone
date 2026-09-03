@@ -323,12 +323,13 @@ cosmosdb_accounts = {
 
 apim_services = {
   "apim-dev" = {
-    name                = "apim-eng-dev-001"
-    resource_group_name = "rg-eng-dev"
-    location            = "East US"
-    publisher_name      = "Engenio"
-    publisher_email     = "mrajashekhar.reddy@aionos.ai"
-    sku_name            = "Basic_1"
+    name                          = "apim-eng-dev-001"
+    resource_group_name           = "rg-eng-dev"
+    location                      = "East US"
+    publisher_name                = "Engenio"
+    publisher_email               = "mrajashekhar.reddy@aionos.ai"
+    sku_name                      = "Basic_1"
+    public_network_access_enabled = true
     tags = {
       environment = "dev"
     }

@@ -179,9 +179,9 @@ variable "key_vaults" {
     location                      = string
     tenant_id                     = optional(string)
     sku_name                      = optional(string, "standard")
-    public_network_access_enabled = optional(bool, true)
+    public_network_access_enabled = optional(bool, false)
     enable_rbac_authorization     = optional(bool, true)
-    network_acls_default_action   = optional(string, "Allow")
+    network_acls_default_action   = optional(string, "Deny")
     tags                          = optional(map(string), {})
   }))
   default = {}
@@ -219,16 +219,17 @@ variable "cosmosdb_accounts" {
 variable "apim_services" {
   description = "Map of API Management Services"
   type = map(object({
-    name                = string
-    resource_group_name = string
-    location            = string
-    publisher_name      = string
-    publisher_email     = string
-    sku_name            = optional(string, "Basic_1")
-    identity_type       = optional(string, "SystemAssigned")
-    identity_key        = optional(string)
-    identity_ids        = optional(list(string))
-    tags                = optional(map(string), {})
+    name                          = string
+    resource_group_name           = string
+    location                      = string
+    publisher_name                = string
+    publisher_email               = string
+    sku_name                      = optional(string, "Basic_1")
+    public_network_access_enabled = optional(bool, false)
+    identity_type                 = optional(string, "SystemAssigned")
+    identity_key                  = optional(string)
+    identity_ids                  = optional(list(string))
+    tags                          = optional(map(string), {})
   }))
   default = {}
 }
