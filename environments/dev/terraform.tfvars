@@ -286,6 +286,7 @@ key_vaults = {
     sku_name                      = "standard"
     public_network_access_enabled = true
     enable_rbac_authorization     = true
+    network_acls_default_action   = "Allow"
     tags = {
       environment = "dev"
     }
@@ -298,7 +299,7 @@ postgresql_servers = {
     resource_group_name = "rg-eng-dev"
     location            = "East US 2"
     version             = "15"
-    sku_name            = "B_Standard_B2s"
+    sku_name            = "GP_Standard_D2s_v3"
     storage_mb          = 32768
     administrator_login = "psqladmin"
     tags = {
