@@ -280,10 +280,12 @@ aks_clusters = {
 
 key_vaults = {
   "kv-dev" = {
-    name                = "kv-eng-dev-001"
-    resource_group_name = "rg-eng-dev"
-    location            = "East US"
-    sku_name            = "standard"
+    name                          = "kv-eng-dev-001"
+    resource_group_name           = "rg-eng-dev"
+    location                      = "East US"
+    sku_name                      = "standard"
+    public_network_access_enabled = true
+    enable_rbac_authorization     = true
     tags = {
       environment = "dev"
     }
