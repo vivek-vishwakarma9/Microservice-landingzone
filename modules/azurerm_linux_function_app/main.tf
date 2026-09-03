@@ -18,7 +18,7 @@ resource "azurerm_linux_function_app" "linux_function_app" {
   storage_account_name          = each.value.storage_account_name
   storage_account_access_key    = each.value.storage_account_access_key
   service_plan_id               = azurerm_service_plan.service_plan[each.key].id
-  public_network_access_enabled = try(each.value.public_network_access_enabled, true)
+  public_network_access_enabled = try(each.value.public_network_access_enabled, false)
   https_only                    = try(each.value.https_only, true)
   tags                          = each.value.tags
 
