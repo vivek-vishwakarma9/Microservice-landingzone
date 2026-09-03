@@ -292,7 +292,7 @@ key_vaults = {
 
 postgresql_servers = {
   "psql-dev" = {
-    name                = "psql-eng-dev-002"
+    name                = "psql-eng-dev-001"
     resource_group_name = "rg-eng-dev"
     location            = "East US 2"
     version             = "15"
@@ -307,7 +307,7 @@ postgresql_servers = {
 
 cosmosdb_accounts = {
   "cosmos-dev" = {
-    name                = "cosmos-eng-dev-002"
+    name                = "cosmos-eng-dev-001"
     resource_group_name = "rg-eng-dev"
     location            = "East US 2"
     offer_type          = "Standard"
