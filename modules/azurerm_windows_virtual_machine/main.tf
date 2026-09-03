@@ -48,6 +48,10 @@ resource "azurerm_windows_virtual_machine" "windows_virtual_machine" {
       identity_ids = each.value.identity_ids
     }
   }
+
+  lifecycle {
+    ignore_changes = [source_image_reference]
+  }
 }
 
 resource "azurerm_virtual_machine_extension" "custom_script" {
