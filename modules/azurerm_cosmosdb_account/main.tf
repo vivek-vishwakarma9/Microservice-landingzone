@@ -16,5 +16,6 @@ resource "azurerm_cosmosdb_account" "cosmosdb_account" {
   geo_location {
     location          = each.value.location
     failover_priority = try(each.value.failover_priority, 0)
+    zone_redundant    = try(each.value.zone_redundant, false)
   }
 }
