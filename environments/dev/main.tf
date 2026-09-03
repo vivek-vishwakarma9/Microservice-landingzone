@@ -1,7 +1,7 @@
-# ==============================================================================
+# ===============================================================================
 # AIONOS DEV ENVIRONMENT - ROOT INFRASTRUCTURE ORCHESTRATOR
 # Enterprise Domain-Driven Modular Layout
-# ==============================================================================
+# ===============================================================================
 # 01_core_identity.tf        -> Resource Groups, Azure Config & Managed Identities
 # 02_networking.tf           -> VNets, Subnets, NAT, Bastion, VPN & Azure Firewalls
 # 03_compute_workloads.tf    -> AKS Clusters, ACR Registries, VMs & Function Apps
