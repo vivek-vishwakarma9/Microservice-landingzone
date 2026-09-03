@@ -8,6 +8,8 @@ resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
   dns_prefix                        = each.value.dns_prefix
   sku_tier                          = each.value.sku_tier
   private_cluster_enabled           = try(each.value.private_cluster_enabled, true)
+  oidc_issuer_enabled               = try(each.value.oidc_issuer_enabled, true)
+  workload_identity_enabled         = try(each.value.workload_identity_enabled, true)
   
   dynamic "api_server_access_profile" {
     for_each = try(each.value.private_cluster_enabled, true) == false ? [1] : []
