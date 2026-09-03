@@ -39,4 +39,8 @@ resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
   identity {
     type = try(each.value.identity_type, "SystemAssigned")
   }
+
+  lifecycle {
+    ignore_changes = [default_node_pool[0].node_count]
+  }
 }
