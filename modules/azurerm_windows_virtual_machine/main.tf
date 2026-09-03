@@ -50,7 +50,7 @@ resource "azurerm_windows_virtual_machine" "windows_virtual_machine" {
   }
 
   lifecycle {
-    ignore_changes = [source_image_reference]
+    ignore_changes = [source_image_reference, vm_agent_platform_updates_enabled]
   }
 }
 
@@ -69,4 +69,8 @@ resource "azurerm_virtual_machine_extension" "custom_script" {
   settings = jsonencode({
     commandToExecute = "powershell -ExecutionPolicy Unrestricted -Command \"${file("${path.module}/scripts/install_tools.ps1")}\""
   })
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
