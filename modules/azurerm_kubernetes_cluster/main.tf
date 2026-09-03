@@ -7,10 +7,13 @@ resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
   resource_group_name               = each.value.resource_group_name
   dns_prefix                        = each.value.dns_prefix
   sku_tier                          = each.value.sku_tier
-  private_cluster_enabled           = coalesce(each.value.private_cluster_enabled, true)
-  #tfsec:ignore:azure-container-limit-authorized-ips
-  api_server_access_profile {
-    authorized_ip_ranges = try(each.value.authorized_ip_ranges, ["10.0.0.0/16"])
+  private_cluster_enabled           = try(each.value.private_cluster_enabled, true)
+  
+  dynamic "api_server_access_profile" {
+    for_each = try(each.value.private_cluster_enabled, true) == false ? [1] : []
+    content {
+      authorized_ip_ranges = try(each.value.authorized_ip_ranges, ["10.0.0.0/16"])
+    }
   }
   role_based_access_control_enabled = try(each.value.role_based_access_control_enabled, true)
   tags                              = each.value.tags
