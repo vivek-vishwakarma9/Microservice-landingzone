@@ -271,7 +271,7 @@ aks_clusters = {
     dns_prefix          = "aksdev"
     sku_tier            = "Standard"
     node_count          = 2
-    vm_size             = "Standard_D2as_v5"
+    vm_size             = "Standard_B2s"
     tags = {
       environment = "dev"
     }
@@ -335,6 +335,7 @@ apim_services = {
 virtual_machines = {
   "vm-ado-agent" = {
     name                = "vm-eng-dev-ado-agent-001"
+    computer_name       = "vmadoagent01"
     resource_group_name = "rg-eng-dev"
     location            = "East US"
     size                = "Standard_D2s_v5"
@@ -351,6 +352,7 @@ virtual_machines = {
   }
   "vm-gh-runner-01" = {
     name                = "vm-eng-dev-gh-runner-001"
+    computer_name       = "vmghrunner01"
     resource_group_name = "rg-eng-dev"
     location            = "East US"
     size                = "Standard_D2s_v5"
@@ -367,6 +369,7 @@ virtual_machines = {
   }
   "vm-gh-runner-02" = {
     name                = "vm-eng-dev-gh-runner-002"
+    computer_name       = "vmghrunner02"
     resource_group_name = "rg-eng-dev"
     location            = "East US"
     size                = "Standard_D2s_v5"

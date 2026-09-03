@@ -4,8 +4,9 @@ resource "azurerm_public_ip" "public_ip" {
   name                = "${each.value.name}-pip"
   location            = each.value.location
   resource_group_name = each.value.resource_group_name
-  allocation_method   = "Static"
-  sku                 = "Standard"
+  allocation_method   = endswith(coalesce(each.value.sku, "Standard"), "AZ") || coalesce(each.value.sku, "Standard") == "VpnGw1" ? "Static" : (each.value.sku == "Basic" ? "Dynamic" : "Static")
+  sku                 = endswith(coalesce(each.value.sku, "Standard"), "AZ") || coalesce(each.value.sku, "Standard") == "VpnGw1" ? "Standard" : (each.value.sku == "Basic" ? "Basic" : "Standard")
+  zones               = endswith(coalesce(each.value.sku, "Standard"), "AZ") ? try(each.value.zones, ["1", "2", "3"]) : null
   tags                = each.value.tags
 }
 
