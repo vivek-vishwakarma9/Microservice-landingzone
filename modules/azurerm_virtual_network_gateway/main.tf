@@ -4,8 +4,8 @@ resource "azurerm_public_ip" "public_ip" {
   name                = "${each.value.name}-pip"
   location            = each.value.location
   resource_group_name = each.value.resource_group_name
-  allocation_method   = "Dynamic"
-  sku                 = "Basic"
+  allocation_method   = "Static"
+  sku                 = "Standard"
   tags                = each.value.tags
 }
 

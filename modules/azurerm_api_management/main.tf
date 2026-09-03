@@ -7,7 +7,7 @@ resource "azurerm_api_management" "api_management" {
   publisher_name                = each.value.publisher_name
   publisher_email               = each.value.publisher_email
   sku_name                      = each.value.sku_name
-  public_network_access_enabled = false
+  public_network_access_enabled = true
   tags                          = each.value.tags
 
   dynamic "identity" {
