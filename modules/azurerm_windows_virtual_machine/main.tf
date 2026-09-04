@@ -17,6 +17,7 @@ resource "azurerm_windows_virtual_machine" "windows_virtual_machine" {
   for_each = var.virtual_machines
 
   name                = each.value.name
+  computer_name       = substr(replace(each.value.name, "-", ""), 0, 15)
   resource_group_name = each.value.resource_group_name
   location            = each.value.location
   size                = each.value.size
