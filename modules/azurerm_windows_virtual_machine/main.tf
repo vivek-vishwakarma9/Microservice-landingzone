@@ -29,16 +29,16 @@ resource "azurerm_windows_virtual_machine" "windows_virtual_machine" {
   tags = each.value.tags
 
   os_disk {
-    caching              = coalesce(each.value.disk_caching, "ReadWrite")
-    storage_account_type = coalesce(each.value.storage_account_type, "Standard_LRS")
-    disk_size_gb         = coalesce(each.value.disk_size_gb, 127)
+    caching              = try(each.value.disk_caching, "ReadWrite")
+    storage_account_type = try(each.value.storage_account_type, "Standard_LRS")
+    disk_size_gb         = try(each.value.disk_size_gb, 127)
   }
 
   source_image_reference {
-    publisher = coalesce(each.value.image_publisher, "MicrosoftWindowsServer")
-    offer     = coalesce(each.value.image_offer, "WindowsServer")
-    sku       = coalesce(each.value.image_sku, "2022-Datacenter")
-    version   = coalesce(each.value.image_version, "latest")
+    publisher = try(each.value.image_publisher, "MicrosoftWindowsServer")
+    offer     = try(each.value.image_offer, "WindowsServer")
+    sku       = try(each.value.image_sku, "2022-Datacenter")
+    version   = try(each.value.image_version, "latest")
   }
 
   dynamic "identity" {

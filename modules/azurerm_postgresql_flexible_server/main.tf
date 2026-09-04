@@ -7,9 +7,9 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
   version                       = each.value.version
   administrator_login           = each.value.administrator_login
   administrator_password        = each.value.administrator_password
-  sku_name                      = coalesce(each.value.sku_name, "GP_Standard_D2s_v3")
+  sku_name                      = try(each.value.sku_name, "GP_Standard_D2s_v3")
   storage_mb                    = each.value.storage_mb
-  zone                          = coalesce(each.value.zone, "1")
-  public_network_access_enabled = coalesce(each.value.public_network_access_enabled, false)
+  zone                          = try(each.value.zone, "1")
+  public_network_access_enabled = try(each.value.public_network_access_enabled, false)
   tags                          = each.value.tags
 }

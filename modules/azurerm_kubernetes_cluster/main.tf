@@ -7,12 +7,12 @@ resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
   resource_group_name       = each.value.resource_group_name
   dns_prefix                = each.value.dns_prefix
   sku_tier                  = each.value.sku_tier
-  private_cluster_enabled   = coalesce(each.value.private_cluster_enabled, true)
+  private_cluster_enabled   = try(each.value.private_cluster_enabled, true)
   oidc_issuer_enabled       = true
   workload_identity_enabled = true
 
   dynamic "api_server_access_profile" {
-    for_each = coalesce(each.value.private_cluster_enabled, true) ? [] : [1]
+    for_each = try(each.value.private_cluster_enabled, true) ? [] : [1]
     content {
       authorized_ip_ranges = try(each.value.authorized_ip_ranges, ["10.0.0.0/16"])
     }
@@ -29,12 +29,12 @@ resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
   }
 
   network_profile {
-    network_plugin      = coalesce(each.value.network_plugin, "azure")
+    network_plugin      = try(each.value.network_plugin, "azure")
     network_plugin_mode = try(each.value.network_plugin_mode, "overlay")
     network_policy      = "azure"
     pod_cidr            = try(each.value.network_plugin_mode, "overlay") == "overlay" ? try(each.value.pod_cidr, null) : null
-    service_cidr        = coalesce(each.value.service_cidr, "172.16.0.0/16")
-    dns_service_ip      = coalesce(each.value.dns_service_ip, "172.16.0.10")
+    service_cidr        = try(each.value.service_cidr, "172.16.0.0/16")
+    dns_service_ip      = try(each.value.dns_service_ip, "172.16.0.10")
   }
 
   identity {

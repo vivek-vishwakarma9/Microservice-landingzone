@@ -7,14 +7,14 @@ resource "azurerm_api_management" "api_management" {
   publisher_name                = each.value.publisher_name
   publisher_email               = each.value.publisher_email
   sku_name                      = each.value.sku_name
-  public_network_access_enabled = coalesce(each.value.public_network_access_enabled, true)
+  public_network_access_enabled = try(each.value.public_network_access_enabled, true)
   tags                          = each.value.tags
 
   dynamic "identity" {
     for_each = each.value.identity_type != null ? [1] : []
     content {
       type         = each.value.identity_type
-      identity_ids = contains(["UserAssigned", "SystemAssigned, UserAssigned"], coalesce(each.value.identity_type, "")) ? each.value.identity_ids : null
+      identity_ids = contains(["UserAssigned", "SystemAssigned, UserAssigned"], try(each.value.identity_type, "")) ? each.value.identity_ids : null
     }
   }
 }

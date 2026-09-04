@@ -6,9 +6,9 @@ resource "azurerm_key_vault" "key_vault" {
   resource_group_name           = each.value.resource_group_name
   enabled_for_disk_encryption   = true
   tenant_id                     = each.value.tenant_id
-  soft_delete_retention_days    = coalesce(each.value.soft_delete_retention_days, 90)
-  purge_protection_enabled      = coalesce(each.value.purge_protection_enabled, true)
-  public_network_access_enabled = coalesce(each.value.public_network_access_enabled, true)
+  soft_delete_retention_days    = try(each.value.soft_delete_retention_days, 90)
+  purge_protection_enabled      = try(each.value.purge_protection_enabled, true)
+  public_network_access_enabled = try(each.value.public_network_access_enabled, true)
   sku_name                      = each.value.sku_name
   tags                          = each.value.tags
 
@@ -24,8 +24,8 @@ resource "azurerm_key_vault" "key_vault" {
   }
 
   network_acls {
-    bypass         = coalesce(each.value.network_acls_bypass, "AzureServices")
-    default_action = coalesce(each.value.network_acls_default_action, "Allow")
+    bypass         = try(each.value.network_acls_bypass, "AzureServices")
+    default_action = try(each.value.network_acls_default_action, "Allow")
   }
 
   lifecycle {
