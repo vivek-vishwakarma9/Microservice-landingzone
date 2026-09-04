@@ -29,16 +29,16 @@ resource "azurerm_windows_virtual_machine" "windows_virtual_machine" {
   tags = each.value.tags
 
   os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-    disk_size_gb         = 32
+    caching              = coalesce(each.value.disk_caching, "ReadWrite")
+    storage_account_type = coalesce(each.value.storage_account_type, "Standard_LRS")
+    disk_size_gb         = coalesce(each.value.disk_size_gb, 127)
   }
 
   source_image_reference {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2022-Datacenter"
-    version   = "latest"
+    publisher = coalesce(each.value.image_publisher, "MicrosoftWindowsServer")
+    offer     = coalesce(each.value.image_offer, "WindowsServer")
+    sku       = coalesce(each.value.image_sku, "2022-Datacenter")
+    version   = coalesce(each.value.image_version, "latest")
   }
 
   dynamic "identity" {
@@ -47,6 +47,12 @@ resource "azurerm_windows_virtual_machine" "windows_virtual_machine" {
       type         = "UserAssigned"
       identity_ids = each.value.identity_ids
     }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      source_image_reference[0].version
+    ]
   }
 }
 

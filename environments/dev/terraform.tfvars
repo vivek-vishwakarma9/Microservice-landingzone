@@ -271,7 +271,7 @@ aks_clusters = {
     dns_prefix          = "aksdev"
     sku_tier            = "Standard"
     node_count          = 2
-    vm_size             = "Standard_D2_v3"
+    vm_size             = "Standard_D2s_v7"
     tags = {
       environment = "dev"
     }

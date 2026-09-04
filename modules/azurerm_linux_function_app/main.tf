@@ -27,4 +27,11 @@ resource "azurerm_linux_function_app" "linux_function_app" {
   }
 
   site_config {}
+
+  lifecycle {
+    ignore_changes = [
+      app_settings,
+      site_config[0].application_stack
+    ]
+  }
 }

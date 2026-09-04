@@ -7,6 +7,10 @@ resource "azurerm_public_ip" "public_ip" {
   allocation_method   = "Static"
   sku                 = "Standard"
   tags                = each.value.tags
+
+  lifecycle {
+    ignore_changes = [zones, sku, allocation_method]
+  }
 }
 
 resource "azurerm_public_ip" "mgmt_public_ip" {
@@ -21,6 +25,10 @@ resource "azurerm_public_ip" "mgmt_public_ip" {
   allocation_method   = "Static"
   sku                 = "Standard"
   tags                = each.value.tags
+
+  lifecycle {
+    ignore_changes = [zones, sku, allocation_method]
+  }
 }
 
 resource "azurerm_firewall_policy" "policy" {
