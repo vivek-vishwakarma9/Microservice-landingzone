@@ -2,18 +2,17 @@
 resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
   for_each = var.clusters
 
-  name                      = each.value.name
-  location                  = each.value.location
-  resource_group_name       = each.value.resource_group_name
-  dns_prefix                = each.value.dns_prefix
-  sku_tier                  = each.value.sku_tier
-  private_cluster_enabled   = coalesce(each.value.private_cluster_enabled, true)
-  oidc_issuer_enabled       = true
-  workload_identity_enabled = true
-
-  #tfsec:ignore:azure-container-limit-authorized-ips
-  api_server_access_profile {
-    authorized_ip_ranges = ["10.0.0.0/16"]
+  name                    = each.value.name
+  location                = each.value.location
+  resource_group_name     = each.value.resource_group_name
+  dns_prefix              = each.value.dns_prefix
+  sku_tier                = each.value.sku_tier
+  private_cluster_enabled = coalesce(each.value.private_cluster_enabled, true)
+  dynamic "api_server_access_profile" {
+    for_each = coalesce(each.value.private_cluster_enabled, true) ? [] : [1]
+    content {
+      authorized_ip_ranges = ["10.0.0.0/16"]
+    }
   }
   role_based_access_control_enabled = true
   tags                              = each.value.tags

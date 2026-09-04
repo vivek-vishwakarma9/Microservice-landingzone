@@ -9,7 +9,7 @@ resource "azurerm_key_vault" "key_vault" {
   soft_delete_retention_days    = 90
   purge_protection_enabled      = coalesce(each.value.purge_protection_enabled, true)
   public_network_access_enabled = coalesce(each.value.public_network_access_enabled, true)
-  sku_name                      = coalesce(each.value.sku_name, "standard")
+  sku_name                      = each.value.sku_name
   tags                          = each.value.tags
 
   dynamic "access_policy" {
@@ -25,6 +25,6 @@ resource "azurerm_key_vault" "key_vault" {
 
   network_acls {
     bypass         = "AzureServices"
-    default_action = coalesce(each.value.network_acls_default_action, "Allow")
+    default_action = "Allow"
   }
 }

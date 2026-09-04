@@ -284,6 +284,7 @@ key_vaults = {
     resource_group_name           = "rg-eng-dev"
     location                      = "East US"
     sku_name                      = "standard"
+    purge_protection_enabled      = true
     public_network_access_enabled = true
     network_acls_default_action   = "Allow"
     tags = {
@@ -292,33 +293,9 @@ key_vaults = {
   }
 }
 
-postgresql_servers = {
-  "psql-dev" = {
-    name                = "psql-eng-dev-001"
-    resource_group_name = "rg-eng-dev"
-    location            = "East US"
-    version             = "15"
-    sku_name            = "B_Standard_B1ms"
-    storage_mb          = 32768
-    administrator_login = "psqladmin"
-    tags = {
-      environment = "dev"
-    }
-  }
-}
+postgresql_servers = {}
 
-cosmosdb_accounts = {
-  "cosmos-dev" = {
-    name                = "cosmos-eng-dev-001"
-    resource_group_name = "rg-eng-dev"
-    location            = "East US"
-    offer_type          = "Standard"
-    kind                = "GlobalDocumentDB"
-    tags = {
-      environment = "dev"
-    }
-  }
-}
+cosmosdb_accounts = {}
 
 apim_services = {
   "apim-dev" = {
@@ -418,19 +395,7 @@ function_apps = {
   }
 }
 
-entra_external_ids = {
-  "entra-external-dev" = {
-    display_name            = "aionos-external-id-dev"
-    domain_name             = "aionosexternaldev.onmicrosoft.com"
-    resource_group_name     = "rg-eng-dev"
-    country_code            = "US"
-    data_residency_location = "United States"
-    sku_name                = "PremiumP1"
-    tags = {
-      environment = "dev"
-    }
-  }
-}
+entra_external_ids = {}
 
 private_endpoints = {
   "pe-keyvault" = {
@@ -442,34 +407,6 @@ private_endpoints = {
     target_name           = "kv-dev"
     subresource_names     = ["vault"]
     private_dns_zone_name = "privatelink.vaultcore.azure.net"
-    vnet_key              = "vnet1"
-    tags = {
-      environment = "dev"
-    }
-  }
-  "pe-postgresql" = {
-    name                  = "pe-psql-eng-dev-001"
-    location              = "East US"
-    resource_group_name   = "rg-eng-dev"
-    subnet_key            = "vnet1-pe_subnet"
-    target_type           = "postgresql"
-    target_name           = "psql-dev"
-    subresource_names     = ["postgresqlServer"]
-    private_dns_zone_name = "privatelink.postgres.database.azure.net"
-    vnet_key              = "vnet1"
-    tags = {
-      environment = "dev"
-    }
-  }
-  "pe-cosmosdb" = {
-    name                  = "pe-cosmos-eng-dev-001"
-    location              = "East US"
-    resource_group_name   = "rg-eng-dev"
-    subnet_key            = "vnet1-pe_subnet"
-    target_type           = "cosmosdb"
-    target_name           = "cosmos-dev"
-    subresource_names     = ["Sql"]
-    private_dns_zone_name = "privatelink.documents.azure.com"
     vnet_key              = "vnet1"
     tags = {
       environment = "dev"
@@ -520,19 +457,9 @@ private_endpoints = {
 }
 
 key_vault_secrets = {
-  "psql-admin-password" = {
-    name          = "psql-admin-password"
-    secret_type   = "random_psql"
-    key_vault_key = "kv-dev"
-  }
   "vm-admin-password" = {
     name          = "vm-admin-password"
     secret_type   = "random_vm"
-    key_vault_key = "kv-dev"
-  }
-  "cosmos-primary-key" = {
-    name          = "cosmos-primary-key"
-    secret_type   = "cosmos_primary_key"
     key_vault_key = "kv-dev"
   }
 }
@@ -581,4 +508,3 @@ role_assignments = {
     scope_key            = "kv-dev"
   }
 }
-
