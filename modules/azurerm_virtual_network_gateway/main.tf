@@ -8,6 +8,10 @@ resource "azurerm_public_ip" "public_ip" {
   sku                 = coalesce(each.value.public_ip_sku, "Standard")
   zones               = each.value.zones
   tags                = each.value.tags
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "azurerm_virtual_network_gateway" "virtual_network_gateway" {
