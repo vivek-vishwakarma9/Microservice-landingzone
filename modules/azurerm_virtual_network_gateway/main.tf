@@ -4,14 +4,9 @@ resource "azurerm_public_ip" "public_ip" {
   name                = "${each.value.name}-pip"
   location            = each.value.location
   resource_group_name = each.value.resource_group_name
-  allocation_method   = coalesce(each.value.allocation_method, "Static")
-  sku                 = coalesce(each.value.public_ip_sku, "Standard")
-  zones               = each.value.zones
+  allocation_method   = "Static"
+  sku                 = "Standard"
   tags                = each.value.tags
-
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 
 resource "azurerm_virtual_network_gateway" "virtual_network_gateway" {
@@ -20,9 +15,9 @@ resource "azurerm_virtual_network_gateway" "virtual_network_gateway" {
   name                = each.value.name
   location            = each.value.location
   resource_group_name = each.value.resource_group_name
-  type                = coalesce(each.value.type, "Vpn")
-  vpn_type            = coalesce(each.value.vpn_type, "RouteBased")
-  sku                 = coalesce(each.value.sku, "VpnGw1")
+  type                = each.value.type
+  vpn_type            = each.value.vpn_type
+  sku                 = each.value.sku
   tags                = each.value.tags
 
   ip_configuration {

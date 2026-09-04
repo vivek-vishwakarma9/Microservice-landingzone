@@ -59,9 +59,6 @@ variable "vpn_gateways" {
     type                = optional(string, "Vpn")
     vpn_type            = optional(string, "RouteBased")
     sku                 = optional(string, "VpnGw1")
-    allocation_method   = optional(string, "Static")
-    public_ip_sku       = optional(string, "Standard")
-    zones               = optional(list(string))
     subnet_key          = optional(string, "vnet1-gateway_subnet")
     subnet_id           = optional(string)
     tags                = optional(map(string), {})
@@ -351,4 +348,3 @@ variable "role_assignments" {
   }))
   default = {}
 }
-

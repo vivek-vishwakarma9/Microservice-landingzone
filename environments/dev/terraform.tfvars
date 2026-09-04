@@ -581,7 +581,3 @@ role_assignments = {
     scope_key            = "kv-dev"
   }
 }
-
-
-
-
