@@ -19,14 +19,23 @@ resource "random_password" "vm_password" {
 
 # Core Resource Groups
 module "resource_groups" {
-  source          = "../../modules/azurerm_resource_group"
-  resource_groups = var.resource_groups
+  source = "../../modules/azurerm_resource_group"
+  resource_groups = {
+    for k, v in var.resource_groups : k => merge(v, {
+      tags = merge(local.default_tags, v.tags != null ? v.tags : {})
+    })
+  }
 }
 
 # User Assigned Managed Identities
 module "user_identities" {
-  source          = "../../modules/azurerm_user_assigned_identity"
-  user_identities = var.user_identities
+  source = "../../modules/azurerm_user_assigned_identity"
+  user_identities = {
+    for k, v in var.user_identities : k => merge(v, {
+      tags = merge(local.default_tags, v.tags != null ? v.tags : {})
+    })
+  }
 
   depends_on = [module.resource_groups]
 }
+

@@ -9,6 +9,7 @@ module "key_vaults" {
     for k, v in var.key_vaults : k => merge(v, {
       tenant_id = data.azurerm_client_config.current.tenant_id
       object_id = data.azurerm_client_config.current.object_id
+      tags      = merge(local.default_tags, v.tags != null ? v.tags : {})
     })
   }
 
@@ -21,6 +22,7 @@ module "postgresql" {
   postgresql_servers = {
     for k, v in var.postgresql_servers : k => merge(v, {
       administrator_password = v.administrator_password != null ? v.administrator_password : random_password.psql_password.result
+      tags                   = merge(local.default_tags, v.tags != null ? v.tags : {})
     })
   }
 
@@ -28,8 +30,12 @@ module "postgresql" {
 }
 
 module "cosmosdb" {
-  source            = "../../modules/azurerm_cosmosdb_account"
-  cosmosdb_accounts = var.cosmosdb_accounts
+  source = "../../modules/azurerm_cosmosdb_account"
+  cosmosdb_accounts = {
+    for k, v in var.cosmosdb_accounts : k => merge(v, {
+      tags = merge(local.default_tags, v.tags != null ? v.tags : {})
+    })
+  }
 
   depends_on = [module.resource_groups]
 }
@@ -40,6 +46,7 @@ module "apim" {
   apim_services = {
     for k, v in var.apim_services : k => merge(v, {
       identity_ids = v.identity_ids != null ? v.identity_ids : (v.identity_key != null ? [module.user_identities.identities[v.identity_key].id] : null)
+      tags         = merge(local.default_tags, v.tags != null ? v.tags : {})
     })
   }
 
@@ -47,8 +54,12 @@ module "apim" {
 }
 
 module "storage_accounts" {
-  source           = "../../modules/azurerm_storage_account"
-  storage_accounts = var.storage_accounts
+  source = "../../modules/azurerm_storage_account"
+  storage_accounts = {
+    for k, v in var.storage_accounts : k => merge(v, {
+      tags = merge(local.default_tags, v.tags != null ? v.tags : {})
+    })
+  }
 
   depends_on = [module.resource_groups]
 }
@@ -75,3 +86,4 @@ module "key_vault_secrets" {
 
   depends_on = [module.key_vaults, module.cosmosdb]
 }
+

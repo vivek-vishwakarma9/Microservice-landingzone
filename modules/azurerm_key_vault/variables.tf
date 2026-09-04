@@ -7,7 +7,7 @@ variable "key_vaults" {
     tenant_id                     = string
     object_id                     = optional(string)
     sku_name                      = optional(string, "standard")
-    purge_protection_enabled      = optional(bool, false)
+    purge_protection_enabled      = optional(bool, true)
     public_network_access_enabled = optional(bool, true)
     network_acls_default_action   = optional(string, "Allow")
     tags                          = optional(map(string), {})

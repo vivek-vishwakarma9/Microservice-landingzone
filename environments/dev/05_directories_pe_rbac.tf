@@ -39,6 +39,7 @@ module "private_endpoints" {
       subnet_id          = module.vnets.subnets[v.subnet_key].id
       vnet_id            = module.vnets.vnets[v.vnet_key].id
       target_resource_id = local.pe_target_resource_ids["${v.target_type}-${v.target_name}"]
+      tags               = merge(local.default_tags, v.tags != null ? v.tags : {})
     })
   }
 
@@ -75,3 +76,4 @@ module "role_assignments" {
     module.user_identities
   ]
 }
+
