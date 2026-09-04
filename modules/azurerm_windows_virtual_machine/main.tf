@@ -20,6 +20,7 @@ resource "azurerm_windows_virtual_machine" "windows_virtual_machine" {
   computer_name       = substr(replace(each.value.name, "-", ""), 0, 15)
   resource_group_name = each.value.resource_group_name
   location            = each.value.location
+  zone                = try(each.value.zone, "1")
   size                = each.value.size
   admin_username      = each.value.admin_username
   admin_password      = each.value.admin_password
