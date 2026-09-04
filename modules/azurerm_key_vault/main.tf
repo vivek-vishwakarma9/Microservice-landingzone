@@ -27,4 +27,8 @@ resource "azurerm_key_vault" "key_vault" {
     bypass         = "AzureServices"
     default_action = "Allow"
   }
+
+  lifecycle {
+    ignore_changes = [purge_protection_enabled]
+  }
 }

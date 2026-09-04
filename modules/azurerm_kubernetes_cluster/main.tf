@@ -8,6 +8,8 @@ resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
   dns_prefix              = each.value.dns_prefix
   sku_tier                = each.value.sku_tier
   private_cluster_enabled = coalesce(each.value.private_cluster_enabled, true)
+  oidc_issuer_enabled     = true
+
   dynamic "api_server_access_profile" {
     for_each = coalesce(each.value.private_cluster_enabled, true) ? [] : [1]
     content {

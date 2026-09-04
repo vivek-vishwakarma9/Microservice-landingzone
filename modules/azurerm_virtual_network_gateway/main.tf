@@ -30,4 +30,8 @@ resource "azurerm_virtual_network_gateway" "virtual_network_gateway" {
     private_ip_address_allocation = "Dynamic"
     subnet_id                     = each.value.subnet_id
   }
+
+  lifecycle {
+    ignore_changes = [sku, vpn_type, type]
+  }
 }
