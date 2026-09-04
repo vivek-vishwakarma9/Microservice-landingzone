@@ -344,7 +344,7 @@ virtual_machines = {
     }
   }
   "vm-gh-runner-02" = {
-    name                = "vm-eng-dev-gh-runner-001"
+    name                = "vm-eng-dev-gh-runner-002"
     resource_group_name = "rg-eng-dev"
     location            = "East US"
     size                = "Standard_D2s_v5"
