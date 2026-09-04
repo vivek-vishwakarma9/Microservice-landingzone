@@ -7,6 +7,9 @@ variable "vpn_gateways" {
     type                = optional(string, "Vpn")
     vpn_type            = optional(string, "RouteBased")
     sku                 = optional(string, "VpnGw1")
+    allocation_method   = optional(string, "Static")
+    public_ip_sku       = optional(string, "Standard")
+    zones               = optional(list(string))
     subnet_id           = string
     tags                = optional(map(string), {})
   }))
