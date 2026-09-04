@@ -5,6 +5,7 @@
 
 locals {
   default_tags = {
+    env                = "dev"
     environment        = "dev"
     cost_center        = "engineering"
     dataClassification = "confidential"
