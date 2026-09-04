@@ -17,7 +17,6 @@ resource "azurerm_windows_virtual_machine" "windows_virtual_machine" {
   for_each = var.virtual_machines
 
   name                = each.value.name
-  computer_name       = try(each.value.computer_name, substr(replace(each.value.name, "-", ""), 0, 15))
   resource_group_name = each.value.resource_group_name
   location            = each.value.location
   size                = each.value.size
@@ -29,15 +28,15 @@ resource "azurerm_windows_virtual_machine" "windows_virtual_machine" {
   tags = each.value.tags
 
   os_disk {
-    caching              = coalesce(each.value.disk_caching, "ReadWrite")
-    storage_account_type = coalesce(each.value.storage_account_type, "Standard_LRS")
-    disk_size_gb         = coalesce(each.value.disk_size_gb, 127)
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+    disk_size_gb         = 32
   }
 
   source_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = try(each.value.image_sku, "2022-datacenter-g2")
+    sku       = "2022-Datacenter"
     version   = "latest"
   }
 
@@ -47,10 +46,6 @@ resource "azurerm_windows_virtual_machine" "windows_virtual_machine" {
       type         = "UserAssigned"
       identity_ids = each.value.identity_ids
     }
-  }
-
-  lifecycle {
-    ignore_changes = [source_image_reference, vm_agent_platform_updates_enabled]
   }
 }
 
@@ -69,8 +64,4 @@ resource "azurerm_virtual_machine_extension" "custom_script" {
   settings = jsonencode({
     commandToExecute = "powershell -ExecutionPolicy Unrestricted -Command \"${file("${path.module}/scripts/install_tools.ps1")}\""
   })
-
-  lifecycle {
-    ignore_changes = [tags]
-  }
 }

@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.3.0, < 2.0.0"
+  required_version = ">= 1.3.0"
 
   backend "azurerm" {
     resource_group_name  = "rg-eng-dev-tfstate"
@@ -11,11 +11,11 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.117"
+      version = "3.117.1"
     }
     random = {
       source  = "hashicorp/random"
-      version = "~> 3.5"
+      version = "3.9.0"
     }
   }
 }

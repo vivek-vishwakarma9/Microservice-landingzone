@@ -17,40 +17,16 @@ resource "random_password" "vm_password" {
   override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
-locals {
-  mandatory_tags = {
-    env                = "dev"
-    environment        = "dev"
-    cost_center        = "engineering"
-    owner              = "devops"
-    product            = "holosport"
-    team               = "engineering"
-    dataClassification = "confidential"
-    project            = "aionos-microservices"
-    managed_by         = "terraform"
-  }
-}
-
 # Core Resource Groups
 module "resource_groups" {
-  source = "../../modules/azurerm_resource_group"
-
-  resource_groups = {
-    for k, v in var.resource_groups : k => merge(v, {
-      tags = merge(local.mandatory_tags, coalesce(v.tags, {}))
-    })
-  }
+  source          = "../../modules/azurerm_resource_group"
+  resource_groups = var.resource_groups
 }
 
 # User Assigned Managed Identities
 module "user_identities" {
-  source = "../../modules/azurerm_user_assigned_identity"
-
-  user_identities = {
-    for k, v in var.user_identities : k => merge(v, {
-      tags = merge(local.mandatory_tags, coalesce(v.tags, {}))
-    })
-  }
+  source          = "../../modules/azurerm_user_assigned_identity"
+  user_identities = var.user_identities
 
   depends_on = [module.resource_groups]
 }

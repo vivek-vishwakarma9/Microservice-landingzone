@@ -119,7 +119,7 @@ vpn_gateways = {
     location            = "East US"
     type                = "Vpn"
     vpn_type            = "RouteBased"
-    sku                 = "VpnGw1AZ"
+    sku                 = "VpnGw1"
     subnet_key          = "vnet1-gateway_subnet"
     tags = {
       environment = "dev"
@@ -271,7 +271,7 @@ aks_clusters = {
     dns_prefix          = "aksdev"
     sku_tier            = "Standard"
     node_count          = 2
-    vm_size             = "Standard_D2s_v7"
+    vm_size             = "Standard_D2_v3"
     tags = {
       environment = "dev"
     }
@@ -285,7 +285,6 @@ key_vaults = {
     location                      = "East US"
     sku_name                      = "standard"
     public_network_access_enabled = true
-    enable_rbac_authorization     = true
     network_acls_default_action   = "Allow"
     tags = {
       environment = "dev"
@@ -297,9 +296,9 @@ postgresql_servers = {
   "psql-dev" = {
     name                = "psql-eng-dev-001"
     resource_group_name = "rg-eng-dev"
-    location            = "East US 2"
+    location            = "East US"
     version             = "15"
-    sku_name            = "GP_Standard_D2s_v3"
+    sku_name            = "B_Standard_B1ms"
     storage_mb          = 32768
     administrator_login = "psqladmin"
     tags = {
@@ -312,7 +311,7 @@ cosmosdb_accounts = {
   "cosmos-dev" = {
     name                = "cosmos-eng-dev-001"
     resource_group_name = "rg-eng-dev"
-    location            = "East US 2"
+    location            = "East US"
     offer_type          = "Standard"
     kind                = "GlobalDocumentDB"
     tags = {
@@ -339,11 +338,9 @@ apim_services = {
 virtual_machines = {
   "vm-ado-agent" = {
     name                = "vm-eng-dev-ado-agent-001"
-    computer_name       = "vmadoagent01"
     resource_group_name = "rg-eng-dev"
     location            = "East US"
-    size                = "Standard_D2s_v7"
-    disk_size_gb        = 127
+    size                = "Standard_D2_v3"
     admin_username      = "azureuser"
     subnet_key          = "vnet1-vm_subnet"
     identity_key        = "uai-vm-dev"
@@ -356,11 +353,9 @@ virtual_machines = {
   }
   "vm-gh-runner-01" = {
     name                = "vm-eng-dev-gh-runner-001"
-    computer_name       = "vmghrunner01"
     resource_group_name = "rg-eng-dev"
     location            = "East US"
-    size                = "Standard_D2s_v7"
-    disk_size_gb        = 127
+    size                = "Standard_D2_v3"
     admin_username      = "azureuser"
     subnet_key          = "vnet1-vm_subnet"
     identity_key        = "uai-vm-dev"
@@ -373,11 +368,9 @@ virtual_machines = {
   }
   "vm-gh-runner-02" = {
     name                = "vm-eng-dev-gh-runner-002"
-    computer_name       = "vmghrunner02"
     resource_group_name = "rg-eng-dev"
     location            = "East US"
-    size                = "Standard_D2s_v7"
-    disk_size_gb        = 127
+    size                = "Standard_D2_v3"
     admin_username      = "azureuser"
     subnet_key          = "vnet1-vm_subnet"
     identity_key        = "uai-vm-dev"
@@ -392,23 +385,21 @@ virtual_machines = {
 
 storage_accounts = {
   "stfuncdev" = {
-    name                          = "stengdevfunc001"
-    resource_group_name           = "rg-eng-dev"
-    location                      = "East US"
-    account_tier                  = "Standard"
-    account_replication_type      = "LRS"
-    public_network_access_enabled = true
+    name                     = "stengdevfunc001"
+    resource_group_name      = "rg-eng-dev"
+    location                 = "East US"
+    account_tier             = "Standard"
+    account_replication_type = "LRS"
     tags = {
       environment = "dev"
     }
   }
   "stcontainerpool" = {
-    name                          = "stengdevcontainerpool001"
-    resource_group_name           = "rg-eng-dev"
-    location                      = "East US"
-    account_tier                  = "Standard"
-    account_replication_type      = "LRS"
-    public_network_access_enabled = false
+    name                     = "stengdevcontainerpool001"
+    resource_group_name      = "rg-eng-dev"
+    location                 = "East US"
+    account_tier             = "Standard"
+    account_replication_type = "LRS"
     tags = {
       environment = "dev"
     }
@@ -427,7 +418,19 @@ function_apps = {
   }
 }
 
-entra_external_ids = {}
+entra_external_ids = {
+  "entra-external-dev" = {
+    display_name            = "aionos-external-id-dev"
+    domain_name             = "aionosexternaldev.onmicrosoft.com"
+    resource_group_name     = "rg-eng-dev"
+    country_code            = "US"
+    data_residency_location = "United States"
+    sku_name                = "PremiumP1"
+    tags = {
+      environment = "dev"
+    }
+  }
+}
 
 private_endpoints = {
   "pe-keyvault" = {

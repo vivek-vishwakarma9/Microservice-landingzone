@@ -27,7 +27,7 @@ variable "azure_firewalls" {
       protocols = optional(list(object({
         type = string
         port = number
-      })), [
+        })), [
         { type = "Https", port = 443 },
         { type = "Http", port = 80 }
       ])

@@ -4,24 +4,14 @@
 
 module "vnets" {
   source = "../../modules/azurerm_virtual_network"
-
-  vnets = {
-    for k, v in var.vnets : k => merge(v, {
-      tags = merge(local.mandatory_tags, coalesce(v.tags, {}))
-    })
-  }
+  vnets  = var.vnets
 
   depends_on = [module.resource_groups]
 }
 
 module "nat_gateways" {
-  source = "../../modules/azurerm_nat_gateway"
-
-  nat_gateways = {
-    for k, v in var.nat_gateways : k => merge(v, {
-      tags = merge(local.mandatory_tags, coalesce(v.tags, {}))
-    })
-  }
+  source       = "../../modules/azurerm_nat_gateway"
+  nat_gateways = var.nat_gateways
 
   depends_on = [module.vnets]
 }
@@ -32,7 +22,6 @@ module "bastions" {
   bastions = {
     for k, v in var.bastions : k => merge(v, {
       subnet_id = v.subnet_id != null ? v.subnet_id : module.vnets.subnets[v.subnet_key].id
-      tags      = merge(local.mandatory_tags, coalesce(v.tags, {}))
     })
   }
 
@@ -45,7 +34,6 @@ module "vpn_gateways" {
   vpn_gateways = {
     for k, v in var.vpn_gateways : k => merge(v, {
       subnet_id = v.subnet_id != null ? v.subnet_id : module.vnets.subnets[v.subnet_key].id
-      tags      = merge(local.mandatory_tags, coalesce(v.tags, {}))
     })
   }
 
@@ -59,7 +47,6 @@ module "azure_firewalls" {
     for k, v in var.azure_firewalls : k => merge(v, {
       subnet_id            = v.subnet_id != null ? v.subnet_id : module.vnets.subnets[v.subnet_key].id
       management_subnet_id = v.management_subnet_key != null ? module.vnets.subnets[v.management_subnet_key].id : null
-      tags                 = merge(local.mandatory_tags, coalesce(v.tags, {}))
     })
   }
 
@@ -72,7 +59,6 @@ module "nsgs" {
   nsgs = {
     for k, v in var.nsgs : k => merge(v, {
       subnet_id = v.subnet_id != null ? v.subnet_id : (v.subnet_key != null ? module.vnets.subnets[v.subnet_key].id : null)
-      tags      = merge(local.mandatory_tags, coalesce(v.tags, {}))
     })
   }
 

@@ -179,9 +179,8 @@ variable "key_vaults" {
     location                      = string
     tenant_id                     = optional(string)
     sku_name                      = optional(string, "standard")
-    public_network_access_enabled = optional(bool, false)
-    enable_rbac_authorization     = optional(bool, true)
-    network_acls_default_action   = optional(string, "Deny")
+    public_network_access_enabled = optional(bool, true)
+    network_acls_default_action   = optional(string, "Allow")
     tags                          = optional(map(string), {})
   }))
   default = {}
@@ -194,7 +193,7 @@ variable "postgresql_servers" {
     resource_group_name    = string
     location               = string
     version                = optional(string, "15")
-    sku_name               = optional(string, "GP_Standard_D2ds_v5")
+    sku_name               = optional(string, "B_Standard_B1ms")
     storage_mb             = optional(number, 32768)
     administrator_login    = optional(string, "psqladmin")
     administrator_password = optional(string)
@@ -225,7 +224,7 @@ variable "apim_services" {
     publisher_name                = string
     publisher_email               = string
     sku_name                      = optional(string, "Basic_1")
-    public_network_access_enabled = optional(bool, false)
+    public_network_access_enabled = optional(bool, true)
     identity_type                 = optional(string, "SystemAssigned")
     identity_key                  = optional(string)
     identity_ids                  = optional(list(string))
@@ -247,10 +246,6 @@ variable "virtual_machines" {
     key_vault_key         = optional(string, "kv-dev")
     subnet_key            = optional(string, "vnet1-vm_subnet")
     subnet_id             = optional(string)
-    computer_name         = optional(string)
-    disk_size_gb          = optional(number, 127)
-    storage_account_type  = optional(string, "Standard_LRS")
-    disk_caching          = optional(string, "ReadWrite")
     identity_key          = optional(string)
     install_kubectl       = optional(bool, false)
     install_az_cli        = optional(bool, false)

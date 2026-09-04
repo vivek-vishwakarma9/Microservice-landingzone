@@ -8,10 +8,6 @@ variable "virtual_machines" {
     admin_username      = optional(string, "azureuser")
     admin_password      = optional(string)
     subnet_id           = string
-    computer_name       = optional(string)
-    disk_size_gb         = optional(number, 127)
-    storage_account_type = optional(string, "Standard_LRS")
-    disk_caching         = optional(string, "ReadWrite")
     install_kubectl     = optional(bool, false)
     install_az_cli      = optional(bool, false)
     install_tools       = optional(bool, false)
