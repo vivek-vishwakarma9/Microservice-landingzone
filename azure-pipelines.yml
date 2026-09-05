@@ -255,8 +255,10 @@ stages:
 
           - task: Bash@3
             displayName: 'Infracost Analysis'
+            continueOnError: true
             env:
               INFRACOST_API_KEY: '$(INFRACOST_API_KEY)'
+              INFRACOST_VERSION: 'v0.10.45'
               PR_ID: '$(System.PullRequest.PullRequestId)'
               REPO_URL: '$(Build.Repository.Uri)'
               SYSTEM_ACCESSTOKEN: '$(System.AccessToken)'
