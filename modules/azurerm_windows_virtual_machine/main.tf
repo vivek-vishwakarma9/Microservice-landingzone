@@ -52,7 +52,9 @@ resource "azurerm_windows_virtual_machine" "windows_virtual_machine" {
 
   lifecycle {
     ignore_changes = [
-      source_image_reference[0].version
+      source_image_reference[0].version,
+      vm_agent_platform_updates_enabled,
+      tags
     ]
   }
 }

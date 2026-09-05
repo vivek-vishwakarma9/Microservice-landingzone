@@ -64,6 +64,15 @@ variable "vpn_gateways" {
     zones               = optional(list(string))
     subnet_key          = optional(string, "vnet1-gateway_subnet")
     subnet_id           = optional(string)
+    vpn_client_configuration = optional(object({
+      address_space        = list(string)
+      vpn_client_protocols = optional(list(string))
+      vpn_auth_types       = optional(list(string))
+      tenant_id            = optional(string)
+      aad_tenant           = optional(string)
+      aad_audience         = optional(string)
+      aad_issuer           = optional(string)
+    }))
     tags                = optional(map(string), {})
   }))
   default = {}

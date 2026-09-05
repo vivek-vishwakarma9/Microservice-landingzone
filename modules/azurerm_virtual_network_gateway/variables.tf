@@ -11,6 +11,15 @@ variable "vpn_gateways" {
     public_ip_sku       = optional(string, "Standard")
     zones               = optional(list(string))
     subnet_id           = string
+    vpn_client_configuration = optional(object({
+      address_space        = list(string)
+      vpn_client_protocols = optional(list(string))
+      vpn_auth_types       = optional(list(string))
+      tenant_id            = optional(string)
+      aad_tenant           = optional(string)
+      aad_audience         = optional(string)
+      aad_issuer           = optional(string)
+    }))
     tags                = optional(map(string), {})
   }))
   default = {}
