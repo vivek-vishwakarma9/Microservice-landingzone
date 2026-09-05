@@ -245,24 +245,23 @@ stages:
                 terraform force-unlock -force "fc01c64a-4a45-70bf-af21-1083fb56390a" || true
 
                 set +e
-                PLAN_ERR=$(terraform plan -no-color -out=eng-dev.tfplan 2>&1)
-                PLAN_EXIT=$?
+                terraform plan -no-color -out=eng-dev.tfplan 2>&1 | tee /tmp/plan_output.txt
+                PLAN_EXIT=${PIPESTATUS[0]}
                 set -e
 
                 if [ $PLAN_EXIT -ne 0 ]; then
-                  STALE_LOCK=$(echo "$PLAN_ERR" | grep -oP "ID:\s+\K[a-f0-9-]+" | head -n 1 || true)
+                  STALE_LOCK=$(grep -oP "ID:\s+\K[a-f0-9-]+" /tmp/plan_output.txt | head -n 1 || true)
                   if [ -n "$STALE_LOCK" ]; then
                     echo "Stale lock detected ($STALE_LOCK). Auto-releasing..."
                     terraform force-unlock -force "$STALE_LOCK" || true
                     terraform plan -no-color -out=eng-dev.tfplan
                   else
-                    echo "$PLAN_ERR"
                     exit $PLAN_EXIT
                   fi
                 fi
 
                 set +e
-                terraform plan -detailed-exitcode -no-color > /tmp/drift_output.txt 2>&1
+                terraform plan -detailed-exitcode -no-color > /dev/null 2>&1
                 EXIT_CODE=$?
                 set -e
                 if [ $EXIT_CODE -eq 2 ]; then
@@ -270,7 +269,6 @@ stages:
                 elif [ $EXIT_CODE -eq 0 ]; then
                   echo "NO DRIFT DETECTED: Infrastructure in Azure is 100% in sync with Terraform code."
                 fi
-
           - task: Bash@3
             displayName: 'Infracost Analysis'
             continueOnError: true
