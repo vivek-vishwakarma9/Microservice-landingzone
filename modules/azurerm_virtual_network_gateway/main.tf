@@ -35,10 +35,10 @@ resource "azurerm_virtual_network_gateway" "virtual_network_gateway" {
     for_each = try(each.value.vpn_client_configuration, null) != null ? [each.value.vpn_client_configuration] : []
     content {
       address_space        = vpn_client_configuration.value.address_space
-      vpn_client_protocols = try(vpn_client_configuration.value.vpn_client_protocols, ["OpenVPN"])
-      vpn_auth_types       = try(vpn_client_configuration.value.vpn_auth_types, ["AAD"])
+      vpn_client_protocols = vpn_client_configuration.value.vpn_client_protocols
+      vpn_auth_types       = vpn_client_configuration.value.vpn_auth_types
       aad_tenant           = vpn_client_configuration.value.aad_tenant
-      aad_audience         = try(vpn_client_configuration.value.aad_audience, "41b23e61-6c1e-4545-b367-cd054e0ed4b4") # Official Azure VPN Client App ID
+      aad_audience         = vpn_client_configuration.value.aad_audience
       aad_issuer           = vpn_client_configuration.value.aad_issuer
     }
   }
