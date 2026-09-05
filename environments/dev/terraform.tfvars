@@ -290,8 +290,8 @@ key_vaults = {
     location            = "East US"
     sku_name                      = "standard"
     purge_protection_enabled      = true
-    public_network_access_enabled = true
-    network_acls_default_action   = "Allow"
+    public_network_access_enabled = false
+    network_acls_default_action   = "Deny"
     tags = {
       environment = "dev"
     }
