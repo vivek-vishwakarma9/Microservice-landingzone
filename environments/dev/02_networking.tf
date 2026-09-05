@@ -46,7 +46,7 @@ module "vpn_gateways" {
       tags      = merge(local.default_tags, v.tags != null ? v.tags : {})
       vpn_client_configuration = v.vpn_client_configuration != null ? merge(v.vpn_client_configuration, {
         tenant_id    = try(v.vpn_client_configuration.tenant_id, data.azurerm_client_config.current.tenant_id)
-        aad_tenant   = try(v.vpn_client_configuration.aad_tenant, "https://login.microsoftonline.com/${data.azurerm_client_config.current.tenant_id}")
+        aad_tenant   = try(v.vpn_client_configuration.aad_tenant, "https://login.microsoftonline.com/${data.azurerm_client_config.current.tenant_id}/")
         aad_issuer   = try(v.vpn_client_configuration.aad_issuer, "https://sts.windows.net/${data.azurerm_client_config.current.tenant_id}/")
         aad_audience = try(v.vpn_client_configuration.aad_audience, "41b23e61-6c1e-4545-b367-cd054e0ed4b4")
       }) : null
