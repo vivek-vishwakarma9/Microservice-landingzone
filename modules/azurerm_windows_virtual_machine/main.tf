@@ -38,7 +38,7 @@ resource "azurerm_windows_virtual_machine" "windows_virtual_machine" {
   source_image_reference {
     publisher = try(each.value.image_publisher, "MicrosoftWindowsServer")
     offer     = try(each.value.image_offer, "WindowsServer")
-    sku       = try(each.value.image_sku, "2022-Datacenter")
+    sku       = try(each.value.image_sku, "2022-Datacenter-g2")
     version   = try(each.value.image_version, "latest")
   }
 
