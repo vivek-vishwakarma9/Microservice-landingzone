@@ -74,4 +74,8 @@ resource "azurerm_virtual_machine_extension" "custom_script" {
   settings = jsonencode({
     commandToExecute = "powershell -ExecutionPolicy Unrestricted -Command \"${file("${path.module}/scripts/install_tools.ps1")}\""
   })
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
