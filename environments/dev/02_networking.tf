@@ -44,6 +44,9 @@ module "vpn_gateways" {
     for k, v in var.vpn_gateways : k => merge(v, {
       subnet_id = v.subnet_id != null ? v.subnet_id : module.vnets.subnets[v.subnet_key].id
       tags      = merge(local.default_tags, v.tags != null ? v.tags : {})
+      vpn_client_configuration = v.vpn_client_configuration != null ? merge(v.vpn_client_configuration, {
+        tenant_id = try(v.vpn_client_configuration.tenant_id, data.azurerm_client_config.current.tenant_id)
+      }) : null
     })
   }
 
@@ -76,4 +79,3 @@ module "nsgs" {
 
   depends_on = [module.vnets]
 }
-

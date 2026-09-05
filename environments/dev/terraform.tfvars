@@ -121,6 +121,11 @@ vpn_gateways = {
     vpn_type            = "RouteBased"
     sku                 = "VpnGw1AZ"
     subnet_key          = "vnet1-gateway_subnet"
+    vpn_client_configuration = {
+      address_space        = ["172.16.0.0/24"]
+      vpn_client_protocols = ["OpenVPN"]
+      vpn_auth_types       = ["AAD"]
+    }
     tags = {
       environment = "dev"
     }
