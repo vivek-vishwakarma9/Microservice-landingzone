@@ -37,9 +37,9 @@ resource "azurerm_virtual_network_gateway" "virtual_network_gateway" {
       address_space        = vpn_client_configuration.value.address_space
       vpn_client_protocols = try(vpn_client_configuration.value.vpn_client_protocols, ["OpenVPN"])
       vpn_auth_types       = try(vpn_client_configuration.value.vpn_auth_types, ["AAD"])
-      aad_tenant           = try(vpn_client_configuration.value.aad_tenant, "https://login.microsoftonline.com/${vpn_client_configuration.value.tenant_id}")
+      aad_tenant           = vpn_client_configuration.value.aad_tenant
       aad_audience         = try(vpn_client_configuration.value.aad_audience, "41b23e61-6c1e-4545-b367-cd054e0ed4b4") # Official Azure VPN Client App ID
-      aad_issuer           = try(vpn_client_configuration.value.aad_issuer, "https://sts.windows.net/${vpn_client_configuration.value.tenant_id}/")
+      aad_issuer           = vpn_client_configuration.value.aad_issuer
     }
   }
 
