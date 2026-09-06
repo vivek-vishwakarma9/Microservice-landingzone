@@ -302,7 +302,7 @@ postgresql_servers = {
     "psql-dev" = {
       name                          = "psql-eng-dev-001"
       resource_group_name           = "rg-eng-dev"
-      location                      = "East US"
+      location                      = "West US"
       version                       = "15"
       sku_name                      = "GP_Standard_D2s_v3"
       storage_mb                    = 32768
@@ -316,9 +316,9 @@ postgresql_servers = {
 
   cosmosdb_accounts = {
     "cosmos-dev" = {
-      name                          = "cosmos-eng-dev-002"
+      name                          = "cosmos-eng-dev-spo-001"
       resource_group_name           = "rg-eng-dev"
-      location                      = "East US"
+      location                      = "West US"
       offer_type                    = "Standard"
       kind                          = "GlobalDocumentDB"
       public_network_access_enabled = true
@@ -486,7 +486,7 @@ private_endpoints = {
     }
   }
   "pe-cosmosdb" = {
-    name                  = "pe-cosmos-eng-dev-002"
+    name                  = "pe-cosmos-eng-dev-spo-001"
     location              = "East US"
     resource_group_name   = "rg-eng-dev"
     subnet_key            = "vnet1-pe_subnet"
