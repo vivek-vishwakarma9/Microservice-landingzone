@@ -190,6 +190,15 @@ nsgs = {
         source_address_prefix      = "10.0.0.0/16"
         destination_address_prefix = "*"
       }
+      "allow-vpn-p2s-inbound" = {
+        name                       = "allow-vpn-p2s-inbound"
+        priority                   = 110
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "*"
+        source_address_prefix      = "172.16.0.0/24"
+        destination_address_prefix = "*"
+      }
       "deny-public-inbound" = {
         name                       = "deny-public-inbound"
         priority                   = 4000
@@ -219,6 +228,15 @@ nsgs = {
         source_address_prefix      = "10.0.0.0/16"
         destination_address_prefix = "*"
       }
+      "allow-vpn-p2s-inbound" = {
+        name                       = "allow-vpn-p2s-inbound"
+        priority                   = 110
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "*"
+        source_address_prefix      = "172.16.0.0/24"
+        destination_address_prefix = "*"
+      }
     }
     tags = {
       environment = "dev"
@@ -237,6 +255,15 @@ nsgs = {
         access                     = "Allow"
         protocol                   = "*"
         source_address_prefix      = "10.0.0.0/16"
+        destination_address_prefix = "*"
+      }
+      "allow-vpn-p2s-inbound" = {
+        name                       = "allow-vpn-p2s-inbound"
+        priority                   = 110
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "*"
+        source_address_prefix      = "172.16.0.0/24"
         destination_address_prefix = "*"
       }
       "deny-public-pe-inbound" = {
@@ -303,6 +330,7 @@ postgresql_servers = {
       name                          = "psql-eng-dev-001"
       resource_group_name           = "rg-eng-dev"
       location                      = "West US"
+      zone                          = ""
       version                       = "15"
       sku_name                      = "GP_Standard_D2s_v3"
       storage_mb                    = 32768
