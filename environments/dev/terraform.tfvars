@@ -327,7 +327,7 @@ key_vaults = {
 
 postgresql_servers = {
     "psql-dev" = {
-      name                          = "psql-eng-dev-001"
+      name                          = "psql-eng-dev-spo-001"
       resource_group_name           = "rg-eng-dev"
       location                      = "West US 3"
       zone                          = "1"
@@ -500,7 +500,7 @@ private_endpoints = {
     }
   }
   "pe-postgresql" = {
-    name                  = "pe-psql-eng-dev-001"
+    name                  = "pe-psql-eng-dev-spo-001"
     location              = "East US"
     resource_group_name   = "rg-eng-dev"
     subnet_key            = "vnet1-pe_subnet"
