@@ -512,6 +512,13 @@ role_assignments = {
     scope_type           = "key_vault"
     scope_key            = "kv-dev"
   }
+  "vm-uai-aks-user" = {
+    role_definition_name = "Azure Kubernetes Service Cluster User Role"
+    principal_type       = "user_identity"
+    principal_key        = "uai-vm-dev"
+    scope_type           = "resource_group"
+    scope_key            = "rg-dev"
+  }
   "vm-uai-aks-admin" = {
     role_definition_name = "Azure Kubernetes Service Cluster Admin Role"
     principal_type       = "user_identity"
