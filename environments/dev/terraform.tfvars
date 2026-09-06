@@ -87,17 +87,19 @@ vnets = {
   }
 }
 
-nat_gateways = {
-  "nat-dev" = {
-    name                = "nat-eng-dev-001"
-    resource_group_name = "rg-eng-dev"
-    location            = "East US"
-    sku_name            = "Standard"
-    tags = {
-      environment = "dev"
-    }
-  }
-}
+# NAT Gateway commented out - Un-comment below if needed in future
+# nat_gateways = {
+#   "nat-dev" = {
+#     name                = "nat-eng-dev-001"
+#     resource_group_name = "rg-eng-dev"
+#     location            = "East US"
+#     sku_name            = "Standard"
+#     tags = {
+#       environment = "dev"
+#     }
+#   }
+# }
+nat_gateways = {}
 
 bastions = {
   "bastion-dev" = {
@@ -125,6 +127,7 @@ vpn_gateways = {
       address_space        = ["172.16.0.0/24"]
       vpn_client_protocols = ["OpenVPN"]
       vpn_auth_types       = ["AAD"]
+      dns_servers          = ["10.0.2.6"]
     }
     tags = {
       environment = "dev"
@@ -289,6 +292,7 @@ acrs = {
     location            = "East US"
     sku                 = "Premium"
     admin_enabled       = false
+    public_network_access_enabled = false
     tags = {
       environment = "dev"
     }
@@ -317,7 +321,7 @@ key_vaults = {
     location            = "East US"
     sku_name                      = "standard"
     purge_protection_enabled      = true
-    public_network_access_enabled = true
+    public_network_access_enabled = false
     network_acls_default_action   = "Allow"
     tags = {
       environment = "dev"
@@ -335,7 +339,7 @@ postgresql_servers = {
       sku_name                      = "GP_Standard_D2s_v3"
       storage_mb                    = 32768
       administrator_login           = "psqladmin"
-      public_network_access_enabled = true
+      public_network_access_enabled = false
       tags = {
         environment = "dev"
       }
@@ -349,7 +353,7 @@ postgresql_servers = {
       location                      = "West US"
       offer_type                    = "Standard"
       kind                          = "GlobalDocumentDB"
-      public_network_access_enabled = true
+      public_network_access_enabled = false
       tags = {
         environment = "dev"
       }
@@ -364,7 +368,7 @@ apim_services = {
     publisher_name                = "Engenio"
     publisher_email               = "mrajashekhar.reddy@aionos.ai"
     sku_name                      = "Basic_1"
-    public_network_access_enabled = true
+    public_network_access_enabled = false
     tags = {
       environment = "dev"
     }
@@ -426,6 +430,7 @@ storage_accounts = {
     location            = "East US"
     account_tier             = "Standard"
     account_replication_type = "LRS"
+    public_network_access_enabled = false
     tags = {
       environment = "dev"
     }
@@ -436,6 +441,7 @@ storage_accounts = {
     location            = "East US"
     account_tier             = "Standard"
     account_replication_type = "LRS"
+    public_network_access_enabled = false
     tags = {
       environment = "dev"
     }
