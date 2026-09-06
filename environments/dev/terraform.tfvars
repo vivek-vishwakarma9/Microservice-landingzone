@@ -1,4 +1,4 @@
-resource_groups = {
+﻿resource_groups = {
   "rg-dev" = {
     name     = "rg-eng-dev"
     location            = "East US"
