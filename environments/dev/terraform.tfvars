@@ -316,7 +316,7 @@ postgresql_servers = {
 
   cosmosdb_accounts = {
     "cosmos-dev" = {
-      name                          = "cosmos-eng-dev-001"
+      name                          = "cosmos-eng-dev-01"
       resource_group_name           = "rg-eng-dev"
       location                      = "East US"
       offer_type                    = "Standard"
@@ -486,7 +486,7 @@ private_endpoints = {
     }
   }
   "pe-cosmosdb" = {
-    name                  = "pe-cosmos-eng-dev-001"
+    name                  = "pe-cosmos-eng-dev-01"
     location              = "East US"
     resource_group_name   = "rg-eng-dev"
     subnet_key            = "vnet1-pe_subnet"
