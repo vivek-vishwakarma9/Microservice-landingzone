@@ -471,6 +471,34 @@ private_endpoints = {
       environment = "dev"
     }
   }
+  "pe-postgresql" = {
+    name                  = "pe-psql-eng-dev-001"
+    location              = "East US"
+    resource_group_name   = "rg-eng-dev"
+    subnet_key            = "vnet1-pe_subnet"
+    target_type           = "postgresql"
+    target_name           = "psql-dev"
+    subresource_names     = ["postgresqlServer"]
+    private_dns_zone_name = "privatelink.postgres.database.azure.com"
+    vnet_key              = "vnet1"
+    tags = {
+      environment = "dev"
+    }
+  }
+  "pe-cosmosdb" = {
+    name                  = "pe-cosmos-eng-dev-001"
+    location              = "East US"
+    resource_group_name   = "rg-eng-dev"
+    subnet_key            = "vnet1-pe_subnet"
+    target_type           = "cosmosdb"
+    target_name           = "cosmos-dev"
+    subresource_names     = ["Sql"]
+    private_dns_zone_name = "privatelink.documents.azure.com"
+    vnet_key              = "vnet1"
+    tags = {
+      environment = "dev"
+    }
+  }
   "pe-aks" = {
     name                  = "pe-aks-eng-dev-001"
     location            = "East US"
@@ -488,6 +516,16 @@ private_endpoints = {
 }
 
 key_vault_secrets = {
+  "psql-admin-password" = {
+    name          = "psql-admin-password"
+    secret_type   = "random_psql"
+    key_vault_key = "kv-dev"
+  }
+  "cosmos-primary-key" = {
+    name          = "cosmos-primary-key"
+    secret_type   = "cosmos_primary_key"
+    key_vault_key = "kv-dev"
+  }
   "vm-admin-password" = {
     name          = "vm-admin-password"
     secret_type   = "random_vm"
@@ -540,6 +578,13 @@ role_assignments = {
   }
   "vm-uai-aks-user" = {
     role_definition_name = "Azure Kubernetes Service Cluster User Role"
+    principal_type       = "user_identity"
+    principal_key        = "uai-vm-dev"
+    scope_type           = "resource_group"
+    scope_key            = "rg-dev"
+  }
+  "vm-uai-cosmos-contributor" = {
+    role_definition_name = "DocumentDB Account Contributor"
     principal_type       = "user_identity"
     principal_key        = "uai-vm-dev"
     scope_type           = "resource_group"
