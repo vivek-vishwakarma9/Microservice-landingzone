@@ -298,9 +298,35 @@ key_vaults = {
   }
 }
 
-postgresql_servers = {}
+postgresql_servers = {
+    "psql-dev" = {
+      name                          = "psql-eng-dev-001"
+      resource_group_name           = "rg-eng-dev"
+      location                      = "East US"
+      version                       = "15"
+      sku_name                      = "GP_Standard_D2ds_v5"
+      storage_mb                    = 32768
+      administrator_login           = "psqladmin"
+      public_network_access_enabled = true
+      tags = {
+        environment = "dev"
+      }
+    }
+  }
 
-cosmosdb_accounts = {}
+  cosmosdb_accounts = {
+    "cosmos-dev" = {
+      name                          = "cosmos-eng-dev-001"
+      resource_group_name           = "rg-eng-dev"
+      location                      = "East US"
+      offer_type                    = "Standard"
+      kind                          = "GlobalDocumentDB"
+      public_network_access_enabled = true
+      tags = {
+        environment = "dev"
+      }
+    }
+  }
 
 apim_services = {
   "apim-dev" = {
