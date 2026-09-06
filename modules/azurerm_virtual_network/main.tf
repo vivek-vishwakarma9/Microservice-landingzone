@@ -5,6 +5,7 @@ resource "azurerm_virtual_network" "virtual_network" {
   location            = each.value.location
   resource_group_name = each.value.resource_group_name
   address_space       = each.value.address_space
+  dns_servers         = try(each.value.dns_servers, null)
   tags                = each.value.tags
 }
 

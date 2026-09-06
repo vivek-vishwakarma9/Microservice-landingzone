@@ -40,7 +40,6 @@ resource "azurerm_virtual_network_gateway" "virtual_network_gateway" {
       aad_tenant           = vpn_client_configuration.value.aad_tenant
       aad_audience         = vpn_client_configuration.value.aad_audience
       aad_issuer           = vpn_client_configuration.value.aad_issuer
-      dns_servers          = try(vpn_client_configuration.value.dns_servers, null)
     }
   }
 
