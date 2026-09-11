@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # AIONOS ENTERPRISE INFRASTRUCTURE PIPELINE (DEV ENVIRONMENT)
 # Azure DevOps CI/CD Automation Pipeline
 # ==============================================================================
@@ -8,6 +8,7 @@ trigger:
     include:
       - main
       - master
+      - feature 
   paths:
     include:
       - 'environments/dev/**'
