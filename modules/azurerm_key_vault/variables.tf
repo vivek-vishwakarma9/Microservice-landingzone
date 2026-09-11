@@ -1,4 +1,4 @@
-variable "key_vaults" {
+﻿variable "key_vaults" {
   description = "Map of Key Vaults to create."
   type = map(object({
     name                          = string
@@ -9,8 +9,10 @@ variable "key_vaults" {
     sku_name                      = optional(string, "standard")
     purge_protection_enabled      = optional(bool, false)
     public_network_access_enabled = optional(bool, true)
+    enable_rbac_authorization     = optional(bool, false)
     network_acls_default_action   = optional(string, "Allow")
     tags                          = optional(map(string), {})
   }))
   default = {}
 }
+

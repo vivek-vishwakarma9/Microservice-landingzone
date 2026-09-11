@@ -1,4 +1,4 @@
-variable "resource_groups" {
+﻿variable "resource_groups" {
   description = "Map of resource groups"
   type = map(object({
     name     = string
@@ -192,6 +192,7 @@ variable "key_vaults" {
     tenant_id                     = optional(string)
     sku_name                      = optional(string, "standard")
     public_network_access_enabled = optional(bool, true)
+    enable_rbac_authorization     = optional(bool, false)
     network_acls_default_action   = optional(string, "Allow")
     tags                          = optional(map(string), {})
   }))
@@ -237,6 +238,7 @@ variable "apim_services" {
     publisher_email               = string
     sku_name                      = optional(string, "Basic_1")
     public_network_access_enabled = optional(bool, true)
+    enable_rbac_authorization     = optional(bool, false)
     identity_type                 = optional(string, "SystemAssigned")
     identity_key                  = optional(string)
     identity_ids                  = optional(list(string))
@@ -360,3 +362,5 @@ variable "role_assignments" {
   }))
   default = {}
 }
+
+

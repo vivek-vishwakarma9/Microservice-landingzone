@@ -1,4 +1,4 @@
-resource "azurerm_key_vault" "key_vault" {
+﻿resource "azurerm_key_vault" "key_vault" {
   for_each = var.key_vaults
 
   name                          = each.value.name
@@ -9,11 +9,12 @@ resource "azurerm_key_vault" "key_vault" {
   soft_delete_retention_days    = try(each.value.soft_delete_retention_days, 90)
   purge_protection_enabled      = try(each.value.purge_protection_enabled, true)
   public_network_access_enabled = try(each.value.public_network_access_enabled, true)
+  enable_rbac_authorization     = try(each.value.enable_rbac_authorization, false)
   sku_name                      = each.value.sku_name
   tags                          = each.value.tags
 
   dynamic "access_policy" {
-    for_each = each.value.object_id != null ? [1] : []
+    for_each = !try(each.value.enable_rbac_authorization, false) && each.value.object_id != null ? [1] : []
     content {
       tenant_id = each.value.tenant_id
       object_id = each.value.object_id

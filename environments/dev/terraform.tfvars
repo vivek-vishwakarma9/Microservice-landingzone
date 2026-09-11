@@ -293,7 +293,7 @@ acrs = {
     location            = "East US"
     sku                 = "Premium"
     admin_enabled       = false
-    public_network_access_enabled = false
+    public_network_access_enabled = true
     tags = {
       environment = "dev"
     }
@@ -322,6 +322,7 @@ key_vaults = {
     location            = "East US"
     sku_name                      = "standard"
     purge_protection_enabled      = true
+    enable_rbac_authorization     = true
       public_network_access_enabled = true
     network_acls_default_action   = "Allow"
     tags = {
@@ -633,3 +634,4 @@ role_assignments = {
     scope_key            = "rg-dev"
   }
 }
+
