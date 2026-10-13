@@ -1,4 +1,4 @@
-﻿# 🏆 Holosport Enterprise Cloud Infrastructure (Azure)
+﻿# 🚀 Azure Enterprise Microservices Landing Zone (Terraform)
 
 [![Terraform](https://img.shields.io/badge/Terraform-1.5+-623CE4.svg?logo=terraform&logoColor=white)](https://www.terraform.io/)
 [![Azure](https://img.shields.io/badge/Microsoft_Azure-Cloud_Platform-0078D4.svg?logo=microsoft-azure&logoColor=white)](https://azure.microsoft.com/)
@@ -7,7 +7,7 @@
 [![CI/CD](https://img.shields.io/badge/Azure_DevOps-Pipelines-0078D7.svg?logo=azure-devops&logoColor=white)](https://azure.microsoft.com/en-us/products/devops/pipelines/)
 [![Zero-Trust](https://img.shields.io/badge/Security-Zero--Trust_PrivateLink-009688.svg)](https://learn.microsoft.com/en-us/azure/private-link/)
 
-> **Enterprise-Grade Infrastructure as Code (IaC)** for the Holosport microservices platform on **Microsoft Azure**. Engineered with modular Terraform, zero-trust network isolation (all PaaS public access disabled), automated DevSecOps pipelines (Checkov/TFSec), and scheduled daily drift governance.
+> **Enterprise-Grade Infrastructure as Code (IaC)** for microservices architecture on **Microsoft Azure**. Engineered with modular Terraform, zero-trust network isolation (PaaS private endpoints), automated DevSecOps pipelines (Checkov/TFSec), and scheduled daily drift governance.
 
 ---
 
@@ -31,15 +31,15 @@
   - [Remote State Configuration](#remote-state-configuration)
   - [Terraform Execution Commands](#terraform-execution-commands)
 - [Day-2 Operations & Runbooks](#-day-2-operations--runbooks)
-- [Authors & Governance](#-authors--governance)
+- [Author & Maintenance](#-author--maintenance)
 
 ---
 
 ## 🏛️ Architecture Overview
 
-The Holosport platform infrastructure is 100% codified using declarative HashiCorp Terraform modules. The architecture follows defense-in-depth principles:
+This cloud landing zone is 100% codified using declarative HashiCorp Terraform modules following defense-in-depth principles:
 
-1. **Zero-Trust Network Perimeter:** All enterprise PaaS data layers (PostgreSQL Flexible Server, Cosmos DB, Key Vault, Storage Accounts) have **Public Network Access explicitly DISABLED**. Data transfer occurs strictly via internal **Azure Private Endpoints (PrivateLink)**.
+1. **Zero-Trust Network Perimeter:** Enterprise PaaS data layers (PostgreSQL Flexible Server, Cosmos DB, Key Vault, Storage Accounts) operate with **Public Network Access explicitly DISABLED**. Data transfer occurs strictly via internal **Azure Private Endpoints (PrivateLink)**.
 2. **Containerized Workloads:** Enterprise **Azure Kubernetes Service (AKS)** deployed with Azure CNI, managed identity federation, and `azurefile-csi` (ReadWriteMany) support for zero-downtime microservices deployments.
 3. **Secure Remote Ingress:** Developers and DevOps runners access resources via **Point-to-Site (P2S) VPN Gateway** backed by Microsoft Entra ID (Azure AD) MFA, alongside browser-based **Azure Bastion**.
 4. **DevSecOps & Automated Governance:** Continuous code validation via `tflint`, `tfsec`, **Checkov SAST (Policy-as-Code)**, `Infracost` spend forecasting, and **Automated Daily Drift Detection** (midnight schedule).
@@ -49,7 +49,7 @@ The Holosport platform infrastructure is 100% codified using declarative HashiCo
 ## 📂 Repository Structure
 
 ```text
-c:\holosport
+.
 ├── .gitignore                          # Standard Terraform & OS ignores
 ├── azure-pipelines.yml                 # Production 4-stage Azure DevOps CI/CD pipeline
 ├── environments/
@@ -255,7 +255,7 @@ The pipeline runs an automated scheduled cron at **`00:00 UTC daily`** (`cron: "
 terraform plan -detailed-exitcode -no-color
 ```
 - **Exit Code 0:** Infrastructure in Azure is 100% in sync with code.
-- **Exit Code 2:** Drift detected! Pipeline logs an issue warning alerting the DevOps team of unauthorized portal modifications.
+- **Exit Code 2:** Drift detected! Pipeline logs an issue warning alerting the DevOps engineer of unauthorized portal modifications.
 
 ### Automated Stale Lock Auto-Recovery
 If a previous deployment is canceled midway and leaves an Azure Blob State Lease lock:
@@ -293,7 +293,7 @@ terraform {
 ```powershell
 # 1. Login to Azure
 az login
-az account set --subscription "3f71298f-8bd4-4d7c-8020-98a79c24727e"
+az account set --subscription "<SUBSCRIPTION_ID>"
 
 # 2. Navigate to dev environment
 cd environments/dev
@@ -308,7 +308,7 @@ terraform validate
 # 5. Generate plan
 terraform plan -out=eng-dev.tfplan
 
-# 6. Apply configuration (Requires DevOps authorization)
+# 6. Apply configuration
 terraform apply "eng-dev.tfplan"
 ```
 
@@ -351,12 +351,10 @@ az keyvault secret show --vault-name kv-eng-dev-001 --name cosmos-primary-key --
 
 ---
 
-## 👥 Authors & Governance
+## 👤 Author & Maintenance
 
-- **Lead DevOps Engineer:** Vivek Vishwakarma
-- **Cloud Team:** Enterprise Cloud & Platform Engineering
-- **Managed Under:** Engenio Inc / Holosport (AIONOS)
-- **Review Cycle:** Automated Daily Drift & Weekly Pipeline Scan
+- **Author / Cloud Engineer:** [Vivek Vishwakarma](https://github.com/vivek-vishwakarma9)
+- **Repository:** [Microservice-landingzone](https://github.com/vivek-vishwakarma9/Microservice-landingzone)
 
 ---
-*Maintained with ❤️ by the DevOps Team. For questions or change requests, please open an issue or pull request.*
+*Built & Maintained with ❤️ by Vivek Vishwakarma.*
