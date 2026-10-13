@@ -5,7 +5,7 @@
     tags = {
       environment = "dev"
       managed_by  = "terraform"
-      project     = "aionos-microservices"
+      project     = "dev-microservices"
     }
   }
   "rg-tfstate" = {
@@ -368,7 +368,7 @@ apim_services = {
     resource_group_name           = "rg-eng-dev"
     location            = "East US"
     publisher_name                = "Engenio"
-    publisher_email               = "mrajashekhar.reddy@aionos.ai"
+    publisher_email               = "vvekvishwaakrma@gmail.com"
     sku_name                      = "Basic_1"
     public_network_access_enabled = true
     tags = {
